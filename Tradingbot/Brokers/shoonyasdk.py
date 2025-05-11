@@ -39,13 +39,7 @@ print(dir(api))
 logging.basicConfig(level=logging.DEBUG)
 
 
-user= 'FA383345'
-pwd= 'Siw#5432'
-vendorcode='FA383345_U'
-apikey= 'd5462018e11b052d6514691eef2584b7'
-imei= 'abc1234'
-token= '7A23AGTP67A65E3T42K6T5ZZ23SX675K'
-
+#   
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 def optionchain (name,exchange='NFO',instrument=''):
