@@ -33,3 +33,13 @@ class orderobject(serializers.ModelSerializer):
         model = md.orderobject
         fields = "__all__"
 
+
+class globalsymbol(serializers.ModelSerializer):
+    class Meta:
+        model = md.globalsymbol
+        fields = "__all__"
+
+class watchlist(serializers.ModelSerializer):
+    class Meta:
+        model = md.watchlist
+        fields = "__all__"

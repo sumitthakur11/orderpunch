@@ -27,6 +27,14 @@ urlpatterns = [
     path('loginbroker', views.loginbroker.as_view(), name="loginbroker"),
     path('logoutbroker', views.logoutbroker.as_view(), name="logoutbroker"),
     path('position', views.postionsobj.as_view(), name="logoutbroker"),
+    path('watchlist', views.watchlist.as_view(), name="logoutbroker"),
+    path('loadaccount', views.loadaccount.as_view(), name="logoutbroker"),
+    path('sendlog', views.sendlog.as_view(), name="sendlog"),
+
+    
+
+
+    
     
 
 

@@ -40,7 +40,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 #   
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 def optionchain (name,exchange='NFO',instrument=''):
 
@@ -96,17 +96,94 @@ def optionchain (name,exchange='NFO',instrument=''):
         else:
             print(f"Failed to download the file. Status code: {data.status_code}")
         
-        
-        db =db[db['Exchange']==exchange]
-        db =db[db['Instrument']==instrument]
-        db =db[db['Symbol']==name]
+        if  name and instrument and exchange:
+            db =db[db['Exchange']==exchange]
+            db =db[db['Instrument']==instrument]
+            db =db[db['Symbol']==name]
+        else:
+            db =db[db['Exchange']==exchange]
+
+
+
+
 
 
 
         
         return db
 
-    
+
+
+savepath= os.path.join(BASE_DIR,"shoonya.json")
+savepath= os.path.normpath(savepath)
+submitdata=[]
+tokenltp=0
+class Ltp:
+    def __init__(self,data) :
+        
+        try:
+            global findata
+            global tokenltp
+            findata= dict()
+
+            if data['t']=='tk' and data['tk']!=tokenltp:    
+                print('check acknowl',data)
+
+                findata['LTP'] =data['lp']
+                findata['exchange']= data['e']
+                findata['broker']='SHOONYA'
+                findata['token']= data['tk']
+                findata['Tradingsymbol']= data['ts']
+                findata['Lotsize']= data['ls']
+                findata['volume']= data['v'] if 'v' in data.keys() else 0
+                tokenltp= data['tk']
+
+                submitdata.append(findata)
+                print(submitdata)
+                file= open(savepath,'w')
+                datasub = json.dump(submitdata,file)
+                file.close()
+            
+
+
+            if data['t']=='tf':
+
+                if 'lp' in  data.keys():
+                    with open(savepath,'r+') as incomingfile:
+                        data1 = json.load(incomingfile)
+                        print(data1,'incomingfile')
+                        incomingfile.seek(0)
+                        for i in range(len(data1)):
+                            if data['tk']==data1[i]['token']:
+                                data1[i]['LTP'] =data['lp']
+                                data1[i]['exchange']= data['e']
+                                data1[i]['broker']='SHOONYA'
+                                data1[i]['token']= data['tk']
+                                data1[i]['volume']= data['v'] if 'v' in data.keys() else 0
+                        datasub = json.dump(data1,incomingfile, indent=4)
+                        incomingfile.truncate()
+                        incomingfile.close()
+                        
+                
+        
+            
+        except KeyError as e :
+            print(e)
+            pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 class shoonyasetup(object):
     def __init__(self, user=1, pwd='', vendorcode= '',app_key='', imei='',token=''):
@@ -143,32 +220,35 @@ class shoonyasetup(object):
 
     
     def login(self):
-        res = api.login(userid=self.user, password=self.pwd,vendor_code= self.vendorcode,api_secret=self.app_key,imei=self.imei, twoFA=self.otp)
-        print(res,'res')
-        print(type(res),res.keys())
-        token={}
-        if res['stat']=='Ok':
-            token= {"Token":res['susertoken'],"uid":res['uid'],"actid":res['actid']}
+        try:
+
+            res = api.login(userid=self.user, password=self.pwd,vendor_code= self.vendorcode,api_secret=self.app_key,imei=self.imei, twoFA=self.otp)
+            token={}
+            if res['stat']=='Ok':
+                token= {"Token":res['susertoken'],"uid":res['uid'],"actid":res['actid']}
+                
+            # token= json.dumps(token)
+            print(token)
             
-        # token= json.dumps(token)
-        print(token)
-         
-        logpath= os.path.join(BASE_DIR,'shoonyalogin')
-        logpath= os.path.normpath(logpath)
+            logpath= os.path.join(BASE_DIR,'shoonyalogin')
+            logpath= os.path.normpath(logpath)
 
 
 
-        if not os.path.exists(logpath):
-            os.makedirs(logpath)
-            print(f"Folder created at: {logpath}")
-        else:
-            print(f"Folder already exists at: {logpath}")
-        logpath= os.path.join(logpath,f"{self.user}.json")
-        logpath= os.path.normpath(logpath)
+            if not os.path.exists(logpath):
+                os.makedirs(logpath)
+                print(f"Folder created at: {logpath}")
+            else:
+                print(f"Folder already exists at: {logpath}")
+            logpath= os.path.join(logpath,f"{self.user}.json")
+            logpath= os.path.normpath(logpath)
 
-        finalout=open(logpath, 'w')
-        json.dump(token, finalout)
-        finalout.close()
+            finalout=open(logpath, 'w')
+            json.dump(token, finalout)
+            finalout.close()
+            return True,None
+        except Exception as e:
+            return False,e
 
     def logout(self):
         tokenkey=self.gettoken()
@@ -255,13 +335,7 @@ class HTTP(shoonyasetup):
         data = api.single_order_history(orderid=orderid)
         return data
     
-    
-    # def getorderlist(self):
-    #     """
-    #     Info :Get order status
-    #     """
-    #     data = self.kite.orders()
-    #     return data
+  
     
     def placeorder(self,orderparam,orderobject,STOPLOSS,PAPER):
         
@@ -270,7 +344,7 @@ class HTTP(shoonyasetup):
         if orderparam['product_type'].upper()== "INTRADAY":
             product_type="I"
         elif orderparam['product_type'].upper() == "CARRYFORWARD":
-            product_type="C"
+            product_type="M"
         elif orderparam['product_type'].upper() == "DELIVERY":
             product_type="C"
 
@@ -282,7 +356,7 @@ class HTTP(shoonyasetup):
         price_type= 'MKT' if orderparam['ordertype']=='MARKET' else "LMT"
         price=orderparam['ltp']
         tradingsymbol=orderparam['tradingsymbol']
-        discloseqty=orderparam['quantity']
+        discloseqty='0'
         trigger_price='0'
         retention='IOC'
         remarks='NA'
@@ -316,11 +390,12 @@ class HTTP(shoonyasetup):
             if ret.status_code==200:
                 ret=ret.json()
                 status=self.order_history(str(ret['norenordno']),tokenkey)
-                orderparam['buyorderid']=ret['norenordno']
+                orderparam['orderid']=ret['norenordno']
                 orderparam['orderstatus']= status['status'].upper()
                 orderparam['status']=True if status['status'].upper()=='COMPLETE' else False
                 orderparam['user']=1
                 orderparam['broker']='SHOONYA'
+                orderparam['avg_price']=status['prc']
                 orderobject(orderparam)
                 return data
             
@@ -393,11 +468,6 @@ class HTTP(shoonyasetup):
 # 
         return symbolslist,token
 
-    # def searchscrip(self,exchange,searchtext):
-    #     RES= api.searchscrip(exchange=exchange, searchtext=searchtext)
-
-    #     return RES
-
     
 
     def get_quotes (self,exchange,TK):
@@ -438,6 +508,93 @@ class HTTP(shoonyasetup):
     
     
 
+class WebSocketConnect(shoonyasetup):
+    def __init__(self,user, pwd, vendorcode,app_key, imei,token,tokenlist=None):
+        super().__init__(user, pwd, vendorcode,app_key, imei,token)
+
+     
+        self.NIFTY= 26000
+        self.NIFTYBANK=26009
+        self.FINNIFTY=26037
+        self.MIDCAP= 26074
+        self.SENSEX=1
+        self.key = app_key
+        feed_opened = False
+        self.ltp= None
+        self.tokenlist= tokenlist if len(tokenlist)>0 else ["NSE|26000"]
+        self.login()
+
+    def newevent(self):
+        obj = md.watchlist.objects.filter(newevent=True,broker='SHOONYA').last()
+        if obj:
+            return obj,obj.newevent
+        else:
+            return obj, False
+
+    def unsubscribetoken(self):
+            try:
+
+                obj = md.watchlist.objects.filter(subscribe=False,broker='SHOONYA')
+                tokenlist=[]
+                for  i in obj:
+                        tlist= f"{i.exchange}|{i.symboltoken}"
+                        i.delete()
+                        tokenlist.append(tlist)
+                return tokenlist
+            except Exception as e :
+                print(e)
+    def subscribetoken(self):
+            try:
+
+                obj = md.watchlist.objects.filter(subscribe=True,broker='SHOONYA')
+                tokenlist=[]
+                for  i in obj:
+                        tlist= f"{i.exchange}|{i.symboltoken}"
+                        tokenlist.append(tlist)
+                return tokenlist
+            except Exception as e :
+                print(e)
+
+
+    
+    async def start_thread(self):
+        def event_handler_order_update(tick_data):
+            
+            pass
+
+        def event_handler_feed_update(tick_data):
+            print(tick_data)
+            Ltp(data=tick_data)
+            objnew,newevent= self.newevent()
+            if newevent:
+                tokelistunsb= self.unsubscribetoken()
+                tokelistsubs= self.subscribetoken()
+                if len(tokelistunsb)>0:
+                    api.unsubscribe(tokelistunsb)
+                if len(tokelistsubs)>0:
+                    api.subscribe(tokelistsubs)
+                objnew.newevent= False
+                objnew.save()
+            
+            
+           
+
+        def open_callback():
+            global feed_opened
+            feed_opened = True
+            api.subscribe(self.tokenlist)
+
+
+
+        api.start_websocket( 
+                             subscribe_callback=event_handler_feed_update, 
+                             socket_open_callback=open_callback)
+
+
+        while True:
+
+            pass
+        
 
 
 

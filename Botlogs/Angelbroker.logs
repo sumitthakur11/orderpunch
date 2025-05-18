@@ -1,0 +1,431 @@
+_____________Angel Logs____________17-05-25 00:32:57 - ERROR - 'Exchange'
+17-05-25 00:33:13 - ERROR - 'Exchange'
+17-05-25 00:33:15 - ERROR - 'Exchange'
+17-05-25 00:34:10 - ERROR - [Errno 2] No such file or directory: ''
+17-05-25 00:34:53 - ERROR - 'Exchange'
+17-05-25 00:41:05 - INFO - function called searchscrip
+17-05-25 00:43:05 - INFO - function called searchscrip
+17-05-25 00:46:48 - INFO - function called searchscrip
+17-05-25 00:49:52 - INFO - function called searchscrip
+17-05-25 00:55:38 - INFO - function called searchscrip
+17-05-25 00:58:46 - INFO - function called searchscrip
+17-05-25 00:59:52 - INFO - function called searchscrip
+17-05-25 01:01:55 - INFO - function called searchscrip
+17-05-25 01:04:20 - INFO - function called searchscrip
+17-05-25 01:04:24 - INFO - function called searchscrip
+17-05-25 01:06:02 - INFO - function called searchscrip
+18-05-25 00:02:36 - INFO - function called searchscrip
+18-05-25 00:04:08 - INFO - function called searchscrip
+18-05-25 00:05:24 - INFO - function called searchscrip
+18-05-25 00:20:30 - INFO - function called searchscrip
+18-05-25 00:20:57 - INFO - function called searchscrip
+18-05-25 00:21:13 - INFO - function called searchscrip
+18-05-25 00:23:50 - INFO - function called searchscrip
+18-05-25 00:23:56 - INFO - function called searchscrip
+18-05-25 00:26:27 - INFO - function called searchscrip
+18-05-25 00:28:11 - INFO - function called searchscrip
+18-05-25 00:28:13 - INFO - function called searchscrip
+18-05-25 00:30:18 - INFO - function called searchscrip
+18-05-25 00:30:24 - ERROR - 'symboltoken'
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\Angelsdk.py", line 431, in placeorder
+    "symboltoken":str(int(orderparam['symboltoken'])),
+                          ~~~~~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'symboltoken'
+18-05-25 00:38:19 - INFO - function called searchscrip
+18-05-25 00:38:23 - INFO - function called searchscrip
+18-05-25 00:38:41 - ERROR - invalid literal for int() with base 10: ''
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\Angelsdk.py", line 431, in placeorder
+    "symboltoken":str(int(orderparam['symboltoken'])),
+                      ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: ''
+18-05-25 00:40:43 - INFO - function called searchscrip
+18-05-25 00:40:49 - ERROR - 'order_type'
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\Angelsdk.py", line 434, in placeorder
+    "ordertype": orderparam['order_type'],
+                 ~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'order_type'
+18-05-25 00:42:57 - INFO - function called searchscrip
+18-05-25 00:43:13 - ERROR - HTTPSConnectionPool(host='apiconnect.angelone.in', port=443): Max retries exceeded with url: /rest/secure/angelbroking/order/v1/placeOrder (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x000001ED4E7751D0>, 'Connection to apiconnect.angelone.in timed out. (connect timeout=7)'))
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connection.py", line 196, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\util\connection.py", line 85, in create_connection
+    raise err
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+TimeoutError: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connectionpool.py", line 789, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connectionpool.py", line 490, in _make_request
+    raise new_e
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connectionpool.py", line 466, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connectionpool.py", line 1095, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connection.py", line 615, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connection.py", line 205, in _new_conn
+    raise ConnectTimeoutError(
+    ...<2 lines>...
+    ) from e
+urllib3.exceptions.ConnectTimeoutError: (<urllib3.connection.HTTPSConnection object at 0x000001ED4E7751D0>, 'Connection to apiconnect.angelone.in timed out. (connect timeout=7)')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connectionpool.py", line 843, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='apiconnect.angelone.in', port=443): Max retries exceeded with url: /rest/secure/angelbroking/order/v1/placeOrder (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x000001ED4E7751D0>, 'Connection to apiconnect.angelone.in timed out. (connect timeout=7)'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\Angelsdk.py", line 442, in placeorder
+    orderid = self.smartApi.placeOrder(orderparams)
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\SmartApi\smartConnect.py", line 332, in placeOrder
+    response= self._postRequest("api.order.place", params)
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\SmartApi\smartConnect.py", line 264, in _postRequest
+    return self._request(route, "POST", params)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\SmartApi\smartConnect.py", line 223, in _request
+    raise e
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\SmartApi\smartConnect.py", line 210, in _request
+    r = requests.request(method,
+                                url,
+    ...<5 lines>...
+                                timeout=self.timeout,
+                                proxies=self.proxies)
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\requests\adapters.py", line 688, in send
+    raise ConnectTimeout(e, request=request)
+requests.exceptions.ConnectTimeout: HTTPSConnectionPool(host='apiconnect.angelone.in', port=443): Max retries exceeded with url: /rest/secure/angelbroking/order/v1/placeOrder (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x000001ED4E7751D0>, 'Connection to apiconnect.angelone.in timed out. (connect timeout=7)'))
+18-05-25 00:46:54 - INFO - function called searchscrip
+18-05-25 00:47:27 - ERROR - HTTPSConnectionPool(host='apiconnect.angelone.in', port=443): Max retries exceeded with url: /rest/secure/angelbroking/order/v1/placeOrder (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x000001ED4E53BC50>, 'Connection to apiconnect.angelone.in timed out. (connect timeout=7)'))
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connection.py", line 196, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\util\connection.py", line 85, in create_connection
+    raise err
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+TimeoutError: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connectionpool.py", line 789, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connectionpool.py", line 490, in _make_request
+    raise new_e
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connectionpool.py", line 466, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connectionpool.py", line 1095, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connection.py", line 615, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connection.py", line 205, in _new_conn
+    raise ConnectTimeoutError(
+    ...<2 lines>...
+    ) from e
+urllib3.exceptions.ConnectTimeoutError: (<urllib3.connection.HTTPSConnection object at 0x000001ED4E53BC50>, 'Connection to apiconnect.angelone.in timed out. (connect timeout=7)')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\connectionpool.py", line 843, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='apiconnect.angelone.in', port=443): Max retries exceeded with url: /rest/secure/angelbroking/order/v1/placeOrder (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x000001ED4E53BC50>, 'Connection to apiconnect.angelone.in timed out. (connect timeout=7)'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\Angelsdk.py", line 442, in placeorder
+    orderid = self.smartApi.placeOrder(orderparams)
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\SmartApi\smartConnect.py", line 332, in placeOrder
+    response= self._postRequest("api.order.place", params)
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\SmartApi\smartConnect.py", line 264, in _postRequest
+    return self._request(route, "POST", params)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\SmartApi\smartConnect.py", line 223, in _request
+    raise e
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\SmartApi\smartConnect.py", line 210, in _request
+    r = requests.request(method,
+                                url,
+    ...<5 lines>...
+                                timeout=self.timeout,
+                                proxies=self.proxies)
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\requests\adapters.py", line 688, in send
+    raise ConnectTimeout(e, request=request)
+requests.exceptions.ConnectTimeout: HTTPSConnectionPool(host='apiconnect.angelone.in', port=443): Max retries exceeded with url: /rest/secure/angelbroking/order/v1/placeOrder (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x000001ED4E53BC50>, 'Connection to apiconnect.angelone.in timed out. (connect timeout=7)'))
+18-05-25 00:49:25 - INFO - function called searchscrip
+18-05-25 00:51:13 - ERROR - 'orderid'
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\Angelsdk.py", line 448, in placeorder
+    status= status[status['orderid']==str(orderid)]
+                   ~~~~~~^^^^^^^^^^^
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\pandas\core\indexes\range.py", line 417, in get_loc
+    raise KeyError(key)
+KeyError: 'orderid'
+18-05-25 00:58:40 - INFO - function called searchscrip
+18-05-25 00:58:42 - INFO - function called searchscrip
+18-05-25 00:58:59 - INFO - function called searchscrip
+18-05-25 01:02:59 - INFO - function called searchscrip
+18-05-25 01:03:15 - ERROR - 'orderid'
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\Angelsdk.py", line 448, in placeorder
+    status= status[status['orderid']==str(orderid)]
+                   ~~~~~~^^^^^^^^^^^
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\pandas\core\indexes\range.py", line 417, in get_loc
+    raise KeyError(key)
+KeyError: 'orderid'
+18-05-25 01:04:04 - INFO - function called searchscrip
+18-05-25 01:06:20 - INFO - function called searchscrip
+18-05-25 01:07:00 - ERROR - 'orderid'
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\Angelsdk.py", line 448, in placeorder
+    status= status[status['orderid']==str(orderid)]
+                   ~~~~~~^^^^^^^^^^^
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\pandas\core\indexes\range.py", line 417, in get_loc
+    raise KeyError(key)
+KeyError: 'orderid'
+18-05-25 01:07:14 - ERROR - 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\Angelsdk.py", line 447, in placeorder
+    status = pd.DataFrame(status['data'])
+                          ~~~~~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+18-05-25 01:15:46 - INFO - function called searchscrip
+18-05-25 01:16:00 - ERROR - SmartConnect.orderBook() takes 1 positional argument but 2 were given
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\Angelsdk.py", line 446, in placeorder
+    status = self.smartApi.orderBook(orderid)
+TypeError: SmartConnect.orderBook() takes 1 positional argument but 2 were given
+18-05-25 01:17:28 - INFO - function called searchscrip
+18-05-25 01:17:39 - ERROR - 'data'
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'data'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\sumit\Abhishek\bot\Tradingbot\Brokers\Angelsdk.py", line 451, in placeorder
+    orderparam['orderstatus']= status['data'].upper()
+                               ~~~~~~^^^^^^^^
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\sumit\Abhishek\Lib\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'data'
+18-05-25 01:21:04 - INFO - function called searchscrip
+18-05-25 11:20:48 - INFO - function called searchscrip
+18-05-25 11:20:51 - INFO - function called searchscrip
+18-05-25 11:20:54 - INFO - function called searchscrip
+18-05-25 12:56:51 - INFO - on open
+18-05-25 12:57:02 - INFO - on open
+18-05-25 12:57:12 - INFO - on open
+18-05-25 12:57:12 - ERROR - Connection closed
+18-05-25 12:57:12 - ERROR - Connection closed
+18-05-25 12:57:12 - ERROR - Connection closed
+18-05-25 12:57:12 - ERROR - Connection closed
+18-05-25 12:57:12 - ERROR - Connection closed
+18-05-25 12:57:12 - ERROR - Connection closed
+18-05-25 12:57:12 - ERROR - Connection closed
+18-05-25 12:58:44 - INFO - on open
+18-05-25 12:58:52 - ERROR - Connection closed
+18-05-25 13:00:33 - INFO - on open
+18-05-25 13:00:43 - INFO - on open
+18-05-25 13:00:46 - ERROR - Connection closed
+18-05-25 13:00:46 - ERROR - Connection closed
+18-05-25 13:00:46 - ERROR - Connection closed
+18-05-25 13:00:46 - ERROR - Connection closed
+18-05-25 13:00:49 - INFO - on open
+18-05-25 13:00:56 - ERROR - Connection closed
+18-05-25 13:01:40 - INFO - on open
+18-05-25 13:01:44 - ERROR - Connection closed
+18-05-25 13:04:07 - INFO - on open
+18-05-25 13:04:10 - ERROR - Connection closed
+18-05-25 13:04:38 - INFO - on open
+18-05-25 13:04:40 - ERROR - Connection closed
+18-05-25 13:09:45 - INFO - on open
+18-05-25 13:09:50 - ERROR - Connection closed
+18-05-25 13:12:18 - INFO - on open
+18-05-25 13:12:21 - ERROR - Connection closed
+18-05-25 13:20:08 - INFO - on open
+18-05-25 13:20:11 - ERROR - Connection closed
+18-05-25 13:23:46 - INFO - on open
+18-05-25 13:23:51 - ERROR - Connection closed
+18-05-25 13:24:25 - INFO - on open
+18-05-25 13:24:36 - INFO - on open
+18-05-25 13:24:39 - ERROR - Connection closed
+18-05-25 13:24:39 - ERROR - Connection closed
+18-05-25 13:24:39 - ERROR - Connection closed
+18-05-25 13:38:50 - INFO - function called searchscrip
+18-05-25 13:38:52 - INFO - function called searchscrip
+18-05-25 13:38:53 - INFO - function called searchscrip
+18-05-25 13:38:55 - INFO - function called searchscrip
+18-05-25 13:39:17 - INFO - function called searchscrip
+18-05-25 13:39:20 - INFO - function called searchscrip
+18-05-25 13:40:18 - INFO - function called searchscrip
+18-05-25 13:40:23 - INFO - function called searchscrip
+18-05-25 13:40:24 - INFO - function called searchscrip
+18-05-25 13:40:26 - INFO - function called searchscrip
+18-05-25 13:40:31 - INFO - function called searchscrip
+18-05-25 13:40:44 - INFO - function called searchscrip
+18-05-25 13:40:51 - INFO - function called searchscrip
+18-05-25 13:41:12 - INFO - on open
+18-05-25 13:41:15 - ERROR - Connection closed
+18-05-25 13:45:58 - INFO - on open
+18-05-25 13:47:50 - INFO - on open
+18-05-25 13:47:54 - ERROR - Connection closed
+18-05-25 13:49:24 - INFO - on open
+18-05-25 13:49:27 - ERROR - Connection closed
+18-05-25 13:49:38 - INFO - on open
+18-05-25 13:49:40 - ERROR - Connection closed
+18-05-25 13:50:38 - INFO - on open
+18-05-25 14:49:08 - INFO - on open
+18-05-25 14:49:46 - INFO - on open
+18-05-25 14:56:04 - INFO - on open
+18-05-25 14:56:08 - ERROR - Connection closed
+18-05-25 14:56:41 - INFO - on open
+18-05-25 14:56:52 - INFO - on open
+18-05-25 14:57:02 - INFO - on open
+18-05-25 14:57:02 - ERROR - Connection closed
+18-05-25 14:57:02 - ERROR - Connection closed
+18-05-25 14:57:02 - ERROR - Connection closed
+18-05-25 14:57:02 - ERROR - Connection closed
+18-05-25 14:57:26 - INFO - on open
+18-05-25 15:00:09 - INFO - on open
+18-05-25 15:00:50 - INFO - on open
+18-05-25 15:01:10 - ERROR - Connection closed
+18-05-25 15:01:10 - ERROR - Connection closed
+18-05-25 15:01:14 - INFO - on open
+18-05-25 15:02:37 - INFO - on open
+18-05-25 15:03:16 - INFO - on open
+18-05-25 16:46:38 - INFO - on open
+18-05-25 17:05:36 - INFO - on open
+18-05-25 17:17:47 - ERROR - Connection closed
+18-05-25 17:17:47 - ERROR - Connection closed
+18-05-25 17:17:47 - ERROR - Connection closed
+18-05-25 17:17:47 - ERROR - Connection closed
+18-05-25 17:19:51 - INFO - on open
+18-05-25 17:20:11 - INFO - on open
+18-05-25 17:20:31 - INFO - on open
+18-05-25 17:21:21 - ERROR - Connection closed
+18-05-25 17:21:21 - ERROR - Connection closed
+18-05-25 17:26:27 - INFO - function called searchscrip
+18-05-25 17:27:36 - INFO - on open
+18-05-25 17:27:47 - INFO - on open
+18-05-25 17:27:56 - ERROR - Connection closed
+18-05-25 17:27:56 - ERROR - Connection closed
+18-05-25 17:27:56 - ERROR - Connection closed
+18-05-25 17:28:10 - INFO - on open
+18-05-25 17:29:56 - INFO - on open
+18-05-25 17:30:18 - INFO - on open
+18-05-25 17:30:23 - ERROR - Connection closed
+18-05-25 17:32:14 - INFO - on open
+18-05-25 17:33:17 - INFO - on open
+18-05-25 17:37:10 - INFO - on open
+18-05-25 17:37:47 - INFO - function called searchscrip
+18-05-25 17:39:06 - INFO - function called searchscrip
+18-05-25 17:39:13 - INFO - function called searchscrip
+18-05-25 17:39:20 - INFO - function called searchscrip
+18-05-25 17:39:21 - INFO - function called searchscrip
+18-05-25 17:39:45 - INFO - function called searchscrip
+18-05-25 17:39:50 - INFO - function called searchscrip
+18-05-25 17:40:04 - INFO - function called searchscrip
+18-05-25 17:40:05 - INFO - function called searchscrip
+18-05-25 17:40:06 - INFO - function called searchscrip
+18-05-25 17:40:06 - INFO - function called searchscrip
+18-05-25 17:40:07 - INFO - function called searchscrip
+18-05-25 17:40:38 - INFO - function called searchscrip
+18-05-25 17:40:48 - INFO - function called searchscrip
+18-05-25 17:40:48 - INFO - function called searchscrip
+18-05-25 17:40:48 - INFO - function called searchscrip
+18-05-25 17:40:51 - INFO - function called searchscrip
+18-05-25 17:40:52 - INFO - function called searchscrip
+18-05-25 17:40:56 - INFO - function called searchscrip
+18-05-25 17:41:24 - INFO - on open
+18-05-25 17:54:24 - ERROR - Connection closed
+18-05-25 17:54:24 - ERROR - Connection closed
+18-05-25 17:54:24 - ERROR - Connection closed
+18-05-25 17:54:24 - ERROR - Connection closed
+18-05-25 18:34:11 - ERROR - {'status': False, 'message': 'Invalid totp', 'errorcode': 'AB1050', 'data': None}

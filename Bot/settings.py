@@ -15,7 +15,7 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+ASGI_APPLICATION = "Bot.asgi.application"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost','127.0.0.1',"3.111.155.182",'3.7.105.243','192.168.1.5']
 CORS_ALLOWED_ORIGINS = [
-"http://127.0.0.1:5173","http://localhost:5173/"
+"http://127.0.0.1:5173","http://localhost:5173/,"
 ]
 CORS_ALLOW_PREFLIGHT = True
 CORS_ALLOW_ALL_ORIGINS = True
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Tradingbot',
     "knox",
+    'channels'
 
 ]
 
@@ -90,6 +91,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000
+
 
 
 # Password validation
@@ -134,3 +137,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
