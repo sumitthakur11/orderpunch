@@ -59,6 +59,12 @@ class Broker(models.Model):
     AuthToken= models.CharField(null=True,blank=True,default=None,max_length=100)
     valid=models.BooleanField(blank=True,null=True,default=False)
     websocket= models.BooleanField(blank=True,null=True,default=False)
+    nickname= models.CharField(null=True,blank=True,default=None,max_length=100)
+    funds= models.CharField(null=True,blank=True,default=None,max_length=100)
+
+
+    
+
 
 class orderobject(models.Model):
     user= models.IntegerField(null=False,blank=False,default=None)
@@ -67,7 +73,7 @@ class orderobject(models.Model):
     status=models.BooleanField(null=True,blank=True,default=False)
     tradingsymbol= models.TextField(null=True,blank=True,default='')
     symboltoken=models.TextField(null=True,blank=True,default='')
-    order_type=models.TextField(null=True,blank=True,default=None)
+    ordertype=models.TextField(null=True,blank=True,default=None)
     transactiontype=models.TextField(null=True,blank=True,default=None)
     product_type=models.TextField(null=True,blank=True,default=None)
     avg_price=models.FloatField(null=True,blank=True,default=None)
@@ -75,17 +81,22 @@ class orderobject(models.Model):
     quantity=models.TextField(null=True,blank=True,default=None)    
     exchange=models.TextField(null=True,blank=True,default=None)
     broker= models.CharField(null=True,blank=True,default=None,max_length=100,choices=brokerlist)
-    accountno= models.CharField(null=True,blank=True,default=None,max_length=100)
-    sellorderid=models.CharField(null=True,blank=True,default=None,max_length=200)
+    accountnumber= models.CharField(null=True,blank=True,default=None,max_length=100)
+    nickname= models.CharField(null=True,blank=True,default='',max_length=100)
+
+    sellorderid=models.CharField(null=True,blank=True,default='',max_length=200)
     side=models.TextField(null=True,blank=True,default=None)
-    orderstatus= models.TextField(null=True,blank=True,default=None)
+    orderstatus= models.TextField(null=True,blank=True,default='')
     ltp=models.FloatField(null=True,blank=True,default=None)
     lotsize= models.IntegerField(null=True,blank=True,default=None)
-    sellorderstatus= models.CharField(null=True,blank=True,default=None,max_length=20,choices=statuslist)
-    buyorderstatus= models.CharField(null=True,blank=True,default=None,max_length=20,choices=statuslist)
+    sellorderstatus= models.CharField(null=True,blank=True,default='',max_length=20,choices=statuslist)
+    buyorderstatus= models.CharField(null=True,blank=True,default='',max_length=20,choices=statuslist)
     paper= models.BooleanField(null=True,blank=True,default=False)
     pnl=models.FloatField(null=True,blank=True,default=0,editable=False)
     sellprice=models.FloatField(null=True,blank=True,default=0)
+    instrument= models.CharField(null=True,blank=True,default='',max_length=100)
+    discloseqty= models.CharField(null=True,blank=True,default='',max_length=100)
+
 
 
 
@@ -113,9 +124,58 @@ class watchlist(models.Model):
     subscribe=models.BooleanField(null=True,blank=True,default=False)
     newevent=models.BooleanField(null=True,blank=True,default=False)
     lotsize=models.CharField(null=True,blank=True,default=None,max_length=200)
+    ltp=models.CharField(null=True,blank=True,default=None,max_length=200)
+    volume=models.CharField(null=True,blank=True,default=None,max_length=200)
+    OI=models.CharField(null=True,blank=True,default=None,max_length=200)
+    instrument=models.CharField(null=True,blank=True,default=None,max_length=200)
+
+
+class Allpositions(models.Model):
+    user= models.IntegerField(null=False,blank=False,default=None)
+    updated_at = models.DateTimeField(auto_now=True)
+    tradingsymbol= models.TextField(null=True,blank=True,default='')
+    symboltoken=models.TextField(null=True,blank=True,default='')
+    ordertype=models.TextField(null=True,blank=True,default=None)
+    transactiontype=models.TextField(null=True,blank=True,default=None)
+    producttype=models.TextField(null=True,blank=True,default=None)
+    buyavgprice=models.FloatField(null=True,blank=True,default=None)
+    indexprice=models.TextField(null=True,blank=True,default=None)
+    netqty=models.TextField(null=True,blank=True,default=None)    
+    exchange=models.TextField(null=True,blank=True,default=None)
+    broker= models.CharField(null=True,blank=True,default=None,max_length=100,choices=brokerlist)
+    accountnumber= models.CharField(null=True,blank=True,default=None,max_length=100)
+    nickname= models.CharField(null=True,blank=True,default=None,max_length=100)
+    ltp=models.FloatField(null=True,blank=True,default=None)
+    lotsize= models.IntegerField(null=True,blank=True,default=None)
+    sellorderstatus= models.CharField(null=True,blank=True,default=None,max_length=20,choices=statuslist)
+    buyorderstatus= models.CharField(null=True,blank=True,default=None,max_length=20,choices=statuslist)
+    pnl= models.CharField(null=True,blank=True,default=None,max_length=100)
+    realised= models.CharField(null=True,blank=True,default=None,max_length=100)
+    unrealised= models.CharField(null=True,blank=True,default=None,max_length=100)
+    sellavgprice =models.CharField(null=True,blank=True,default=None,max_length=100)
+    instrument= models.CharField(null=True,blank=True,default=None,max_length=100)
+
+
 
     
-    
-
+class allholding(models.Model):
+    user= models.IntegerField(null=False,blank=False,default=None)
+    updated_at = models.DateTimeField(auto_now=True)
+    tradingsymbol= models.TextField(null=True,blank=True,default='')
+    symboltoken=models.TextField(null=True,blank=True,default='')
+    product=models.TextField(null=True,blank=True,default=None)
+    averageprice=models.FloatField(null=True,blank=True,default=None)
+    quantity=models.TextField(null=True,blank=True,default=None)    
+    exchange=models.TextField(null=True,blank=True,default=None)
+    broker= models.CharField(null=True,blank=True,default=None,max_length=100,choices=brokerlist)
+    accountnumber= models.CharField(null=True,blank=True,default=None,max_length=100)
+    nickname= models.CharField(null=True,blank=True,default=None,max_length=100)
+    ltp=models.FloatField(null=True,blank=True,default=None)
+    lotsize= models.IntegerField(null=True,blank=True,default=None)
+    profitandloss= models.CharField(null=True,blank=True,default=None,max_length=100)
+    instrument= models.CharField(null=True,blank=True,default=None,max_length=100)
+    pnlpercentage= models.CharField(null=True,blank=True,default=None,max_length=100)
+    totalprofitandloss= models.CharField(null=True,blank=True,default=None,max_length=100)
+    totalpnlpercentage= models.CharField(null=True,blank=True,default=None,max_length=100)
 
     

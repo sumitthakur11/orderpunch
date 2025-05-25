@@ -1,14 +1,25 @@
 import Tradingbot.models as md 
 import Tradingbot.serializers as ser 
-from .Brokers import shoonyasdk,Angelsdk
+from .Brokers import shoonyasdk,Angelsdk,motilalsdk,growwsdk,dhansdk,flattradesdk,stoxkartsdk
 from concurrent.futures import ThreadPoolExecutor
 import pathlib 
 import os
 import json
 import asyncio
 path = pathlib.Path(__file__).parent.parent
-print(path)
+from Tradingbot import env
 
+
+import time
+import platform
+print(platform.version())
+
+logger2path= os.path.join(path,'Botlogs/Frontendlog.logs')
+logpathfron= os.path.normpath(logger2path)
+logpathfron=env.setup_logger(logpathfron)
+
+
+stoxkartsdk.searchscrip('','NSE','EQ')
 
 
 class utility:
@@ -73,18 +84,392 @@ class utility:
                      
                      return excp
 
-        
+        def checkfunds(self):
+            accountlist= md.Broker.objects.filter(user=1,valid=True)
+            for br in accountlist:
+                if br.brokername.lower()=='shoonya':
+                    print(br.brokername)
+                    bruser= br.accountnumber
+                    pwd= br.password
+                    vendorcode=br.vendorcode
+                    apikey= br.apikey
+                    imei= br.imei
+                    token= br.AuthToken
+
+                    self.broker = shoonyasdk.HTTP(bruser,pwd,vendorcode,apikey,imei,token)
+                    fund,excp= self.broker.checkfunds()
+                    if fund:
+
+                        br.funds=fund
+                        br.valid=True
+
+                        br.save()
+                    else: 
+                        br.funds="Unable to Fetch"
+                        br.valid=False
+
+                        br.save()
+                        logpathfron.error(f'connect to administration with following error:-{excp}')
+                        
+                        
+                        
+
+                elif br.brokername.lower()=='angel':
+                    bruser= br.accountnumber
+                    pwd= br.password
+                    apikey= br.apikey
+                    token= br.AuthToken
+                    print('eh')
+                    self.broker = Angelsdk.HTTP(bruser,pwd,apikey,token)
+                    fund,excp=self.broker.checkfunds()
+                    print(fund)
+
+                    if fund:
+                        br.funds=fund['net']
+                        br.valid= True
+                        br.save()
+                    else: 
+                        br.funds="Unable to Fetch"
+                        br.valid= False
+
+                        br.save()
+                        logpathfron.error(f'connect to administration with following error:-{excp}')
+
+                        
+                        
+        def getposition(self):
+            accountlist= md.Broker.objects.filter(user=1,valid=True)
+            print(accountlist)
+            for br in accountlist:
+                if br.brokername.lower()=='shoonya':
+                    bruser= br.accountnumber
+                    pwd= br.password
+                    vendorcode=br.vendorcode
+                    apikey= br.apikey
+                    imei= br.imei
+                    token= br.AuthToken
+
+                    self.broker = shoonyasdk.HTTP(bruser,pwd,vendorcode,apikey,imei,token)
+
+                    fund,excp= self.broker.getposition()
+                    if fund:
+                        
+
+                        md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
+                        for data in fund:
+                            data['accountnumber']=br.accountnumber
+                            data['user']=1
+                            data['broker']='SHOONYA'
+                            data['nickname']=br.nickname
+
+                            serialize = ser.Allpositions(data=data)
+                            if serialize.is_valid(raise_exception=True):
+                                serialize.save()
+
+
+                        pass
+                    else:
+                        pass
+                       
+                        logpathfron.error(f'connect to administration with following error:-{excp}')
+                        
+                        
+                        
+
+                elif br.brokername.lower()=='angel':
+                    print('here')
+                    bruser= br.accountnumber
+                    pwd= br.password    
+                    apikey= br.apikey
+                    token= br.AuthToken
+
+                    self.broker = Angelsdk.HTTP(bruser,pwd,apikey,token)
+                    fund,excp=self.broker.getposition()
+                    time.sleep(0.5)
+                    if fund:
+
+                        for data in fund:
+                            md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
+                            data['accountnumber']=br.accountnumber
+                            data['user']=1
+                            data['broker']='ANGEL'
+                            data['nickname']=br.nickname
+                            
+                            serialize = ser.Allpositions(data=data)
+                            if serialize.is_valid(raise_exception=True):
+                                serialize.save()
+                       
+                    else: 
+                        logpathfron.error(f'connect to administration with following error:-{excp}')
+
+                        
+                        
+
+
+
 
         
-                    
+
+        def getholding(self):
+            accountlist= md.Broker.objects.filter(user=1,valid=True)
+            for br in accountlist:
+                if br.brokername.lower()=='shoonya':
+                    bruser= br.accountnumber
+                    pwd= br.password
+                    vendorcode=br.vendorcode
+                    apikey= br.apikey
+                    imei= br.imei
+                    token= br.AuthToken
+
+                    self.broker = shoonyasdk.HTTP(bruser,pwd,vendorcode,apikey,imei,token)
+                    md.allholding.objects.filter(accountnumber=br.accountnumber).delete()
+
+                    fund,excp= self.broker.allholding()
+                    if fund:
+                        md.allholding.objects.filter(accountnumber=br.accountnumber).delete()
+
+                        for data in fund:
+
+                            
+                            data=data['holdings']
+                        
+
+                            serialize = ser.allholding(data=data)
+                            if serialize.is_valid(raise_exception=True):
+                                serialize.save()
+
+
+                        pass
+                    else:
+                        pass
+                       
+                        logpathfron.error(f'connect to administration with following error:-{excp}')
+                        
+                        
+                        
+
+                elif br.brokername.lower()=='angel':
+                    print('here')
+                    bruser= br.accountnumber
+                    pwd= br.password
+                    apikey= br.apikey
+                    token= br.AuthToken
+
+                    self.broker = Angelsdk.HTTP(bruser,pwd,apikey,token)
+                    fund,excp=self.broker.allholding()
+                    time.sleep(0.5)
+                    if fund:
+                        md.allholding.objects.filter(accountnumber=br.accountnumber).delete()
+                        for data in fund['holdings']:
+
+                            data['user']= 1
+                            data['broker']= br.brokername
+                            data['accountnumber']=br.accountnumber
+                            data['nickname']= br.nickname
+
+
+                            data['totalprofitandloss']=fund['totalholding']['totalprofitandloss']
+                            data['totalpnlpercentage']=fund['totalholding']['totalpnlpercentage']
+
+                            serialize = ser.allholding(data=data)
+                            if serialize.is_valid(raise_exception=True):
+                                serialize.save()
+
+                       
+                    else: 
+                        logpathfron.error(f'connect to administration with following error:-{excp}')
+
+                        
+                        
+
+        
+
+
+
+
+
+
 
         def logoutbroker(self,data):
+
             if data['broker'].lower()=='shoonya':
                    self.broker = shoonyasdk.shoonyasetup()
                    self.broker.logout()
 
 
+        def cancel_order(self,orderid):
+            try:
+                print(orderid)
+                for i in orderid:
+
+                    orderobj = md.orderobject.objects.filter(id=i).last()
+                    br=md.Broker.objects.filter(accountnumber=orderobj.accountnumber).last()
+                    if br.valid:
+                            bruser= br.accountnumber
+                            pwd= br.password
+                            vendorcode=br.vendorcode
+                            apikey= br.apikey
+                            imei= br.imei
+                            token= br.AuthToken
+                            if br.brokername=='SHOONYA':
+                                self.broker = shoonyasdk.HTTP(token=token,
+                                                    user=bruser, 
+                                                    pwd=pwd, 
+                                                    vendorcode= vendorcode,
+                                                    app_key=apikey, 
+                                                    imei=imei)
+                                order_ids=self.broker.cancel_order(orderobj.orderid)
+                        
+                            if br.brokername=='ANGEL':
+                            
+
+                                
+                                Angel = Angelsdk.HTTP(token=token,
+                                                    username=bruser, 
+                                                    pwd=pwd, 
+                                                    api_key=apikey, )
+                                order_ids=Angel.cancel_order(orderobj.orderid)
+                            return order_ids
+
+                                
+
+                    else:
+                            
+                            msg=f"Account Number {br.accountnumber} Nickname {br.nickname} is not logged in. Kindly Logged in to the Account"
+                            logpathfron.error(msg)
+
+        
+            
+                        
+            except Exception as e:
+                print(str(e))
+                logpathfron.error(f'Contact to administrator with following error:{e}')
+
+                return str(e)
+
+        def asignorderstatus(self,orderbook,broker):
+            if broker == 'SHOONYA':
+
+                for i in orderbook:
+                    order= md.orderobject.objects.filter(orderid=i['norenordno']).last()
+                    if order:
+                        order.orderstatus= i['status'].upper()
+                        order.avg_price=i['avgprc']
+                        order.save()
+                    
+            if broker =='ANGEL':
+                for i in orderbook:
+                    order= md.orderobject.objects.filter(orderid=i['orderid']).last()
+                    if order:
+                        order.orderstatus= i['status'].upper()
+                        order.avg_price=i['averageprice']
+                        order.save()
+
+
+
+
+
               
+        def orderstatus(self):
+            try:
+
+                    account=md.Broker.objects.filter(valid=True)
+
+
+                    for br in account:
+
+                        if br.valid:
+                            bruser= br.accountnumber
+                            pwd= br.password
+                            vendorcode=br.vendorcode
+                            apikey= br.apikey
+                            imei= br.imei
+                            token= br.AuthToken
+                            if br.brokername=='SHOONYA':
+                                        self.broker = shoonyasdk.HTTP(token=token,
+                                                            user=bruser, 
+                                                            pwd=pwd, 
+                                                            vendorcode= vendorcode,
+                                                            app_key=apikey, 
+                                                            imei=imei)
+                                        order_ids=self.broker.orderBook()
+                                        self.asignorderstatus(order_ids,'SHOONYA')
+                            if br.brokername=='ANGEL':
+                                    
+
+                                        
+                                        Angel = Angelsdk.HTTP(token=token,
+                                                            username=bruser, 
+                                                            pwd=pwd, 
+                                                            api_key=apikey, )
+                                        order_ids=Angel.orderBook()
+                                        self.asignorderstatus(order_ids,'ANGEL')
+
+                            return order_ids
+
+                                
+
+                    else:
+                            
+                            msg=f"Account Number {br.accountnumber} Nickname {br.nickname} is not logged in. Kindly Logged in to the Account"
+                            logpathfron.error(msg)
+
+        
+            
+                        
+            except Exception as e:
+                print(str(e))
+                logpathfron.error(f'Contact to administrator with following error:{e}')
+
+                return str(e)
+
+
+        def modifyorder(self,data):
+            try:
+                orderobj = md.orderobject.objects.filter(orderid=data['orderid']).last()
+                br=md.Broker.objects.filter(accountnumber=orderobj.accountnumber).last()
+                if br.valid:
+                        bruser= br.accountnumber
+                        pwd= br.password
+                        vendorcode=br.vendorcode
+                        apikey= br.apikey
+                        imei= br.imei
+                        token= br.AuthToken
+                        if br.brokername=='SHOONYA':
+                            self.broker = shoonyasdk.HTTP(token=token,
+                                                user=bruser, 
+                                                pwd=pwd, 
+                                                vendorcode= vendorcode,
+                                                app_key=apikey, 
+                                                imei=imei)
+                            order_ids=self.broker.modifyorder(data,orderobj)
+                    
+                        if br.brokername=='ANGEL':
+                           
+
+                            
+                            Angel = Angelsdk.HTTP(token=token,
+                                                username=bruser, 
+                                                pwd=pwd, 
+                                                api_key=apikey, )
+                            order_ids=Angel.modifyorder(data,orderobj)
+                        return order_ids
+
+                            
+
+                else:
+                        
+                        msg=f"Account Number {br.accountnumber} Nickname {br.nickname} is not logged in. Kindly Logged in to the Account"
+                        logpathfron.error(msg)
+
+                            
+            
+                        
+            except Exception as e:
+                print(str(e))
+                logpathfron.error(f'Contact to administrator with following error:{e}')
+
+                return str(e)
               
 
         def placeorder(self,orderparams,batmcal=60,subclients=0,STOPLOSS=True,PAPER=True,makesymbol=True,advicecheck=''):
@@ -95,40 +480,21 @@ class utility:
                 placeorders=False
                 quantity=orderparams['quantity']
 
-                # if orderparams['']
-                if not orderparams['account']:
+                
+                
+                if orderparams['account']:
+                    for i in orderparams['account']:
+                        orderparams['accountnumber']=i
+                        orderparams['user']=1
 
 
-                    alllist=md.Broker.objects.filter(brokername=orderparams['broker'])
-                    for i in alllist:
-                        if i.valid:
-                            bruser= i.accountnumber
-                            pwd= i.password
-                            vendorcode=i.vendorcode
-                            apikey= i.apikey
-                            imei= i.imei
-                            token= i.AuthToken
-                            if i.brokername=='SHOONYA':
-                                 
-                                shoonya = shoonyasdk.HTTP(token=token,
-                                                    user=bruser, 
-                                                    pwd=pwd, 
-                                                    vendorcode= vendorcode,
-                                                    app_key=apikey, 
-                                                    imei=imei)
-                                order_ids=shoonya.placeorder(orderparams,self.orderobject,False,False)
+                        
+                        br=md.Broker.objects.filter(accountnumber=i).last()
+                        if br.valid:
+                            orderparams['broker']=br.brokername
+                            orderparams['nickname']=br.nickname
 
-                            if i.brokername=='ANGEL':
-                                Angel = Angelsdk.HTTP(token=token,
-                                                    username=bruser, 
-                                                    pwd=pwd, 
-                                                    api_key=apikey, )
-                                order_ids=Angel.placeorder(orderparams,self.orderobject,False,False)
 
-                   
-                elif orderparams['account']:
-                         br=md.Broker.objects.filter(brokerid=orderparams['account']['brokerid']).last()
-                         if br.valid:
                             bruser= br.accountnumber
                             pwd= br.password
                             vendorcode=br.vendorcode
@@ -145,33 +511,34 @@ class utility:
                                 order_ids=self.broker.placeorder(orderparams,self.orderobject,False,False)
                         
                             if br.brokername=='ANGEL':
+                                orderparams['broker']=br.brokername
+                                orderparams['nickname']=br.nickname
+
+                                
                                 Angel = Angelsdk.HTTP(token=token,
                                                     username=bruser, 
                                                     pwd=pwd, 
                                                     api_key=apikey, )
                                 order_ids=Angel.placeorder(orderparams,self.orderobject,False,False)
 
+                        else:
+                            
+                            msg=f"Account Number {br.accountnumber} Nickname {br.nickname} is not logged in. Kindly Logged in to the Account"
+                            logpathfron.error(msg)
+
                               
-                        
-
-
-                    # self.broker=self.brokerobj(orderparams['broker'])
-
-
-                # quotes= self.broker.get_quotes(orderparams['segment'],orderparams['symboltoken'])
-                # orderparams['ltp']= float(quotes['lp'])
-                # orderparams['lotsize']=quotes['ls'] if orderparams['fno']!= 'EQ' else 1
-                # orderparams['quantity']= str(quantity*orderparams['lotsize'])
                 
                 return order_ids
                         
             except Exception as e:
                 print(str(e))
+                logpathfron.error(f'Contact to administrator with following error:{e}')
+
                 return str(e)
 
 
         def loginshoonya(self):
-            obj2= md.Broker.objects.filter(websocket=True,brokername='SHOONYA').last()
+            obj2= md.Broker.objects.filter(brokername='SHOONYA').last()
             bruser= obj2.accountnumber
             pwd= obj2.password
             vendorcode=obj2.vendorcode
@@ -295,7 +662,16 @@ class utility:
             vendorcode= broker.vendorcode
             webobj= Angelsdk.WebSocketConnect(accountno,passwrd,apikey,autoken)
             asyncio.run(webobj.start_thread())
+        
 
+        def dhanwebsocket(self):
+            obj = md.watchlist.objects.filter(broker='ANGEL',subscribe= True)
+            broker= md.Broker.objects.filter(brokername='ANGEL').last()
+            autoken= broker.AuthToken
+            accountno= broker.accountnumber
+            webobj= dhansdk.WebSocketConnect(accountno,autoken)
+            asyncio.run(webobj.start_thread())
+        
 
 
 
@@ -315,11 +691,13 @@ class utility:
              
         
             return data
-
+        
 
                  
                  
-# obj=utility(1)
-# obj.shoonyawebsocket()
+obj=utility(1)
+# obj.checkfunds()
+# obj.orderstatus()
+
 # data =obj.createOrderpunchsymbol()
 

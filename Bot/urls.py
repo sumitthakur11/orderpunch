@@ -30,6 +30,12 @@ urlpatterns = [
     path('watchlist', views.watchlist.as_view(), name="logoutbroker"),
     path('loadaccount', views.loadaccount.as_view(), name="logoutbroker"),
     path('sendlog', views.sendlog.as_view(), name="sendlog"),
+    path('getfunds', views.getfunds.as_view(), name="getfunds"),
+    path('getposition', views.getposition.as_view(), name="getposition"),
+    path('getholding', views.getholding.as_view(), name="getholding"),
+
+
+
 
     
 

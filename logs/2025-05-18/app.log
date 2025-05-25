@@ -144,3 +144,4 @@
 [W 250518 17:54:24 smartWebSocketV2:343] Connection closed due to max retry attempts reached.
 [W 250518 17:54:24 smartWebSocketV2:343] Connection closed due to max retry attempts reached.
 [E 250518 18:34:11 smartConnect:247] Error occurred while making a POST request to https://apiconnect.angelone.in/rest/auth/angelbroking/user/v1/loginByPassword. Error: Invalid totp. URL: https://apiconnect.angelone.in/rest/auth/angelbroking/user/v1/loginByPassword, Headers: {'Content-type': 'application/json', 'X-ClientLocalIP': '127.0.0.1', 'X-ClientPublicIP': '106.193.147.98', 'X-MACAddress': 'e4:c7:67:68:e7:86', 'Accept': 'application/json', 'X-PrivateKey': '1234', 'X-UserType': 'USER', 'X-SourceID': 'WEB'}, Request: {'clientcode': 'Hunter', 'password': 'Hunter@0606', 'totp': '797053'}, Response: {'status': False, 'message': 'Invalid totp', 'errorcode': 'AB1050', 'data': None}
+[W 250518 20:02:32 smartWebSocketV2:319] Attempting to resubscribe/reconnect (Attempt 1)...

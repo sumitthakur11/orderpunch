@@ -21,14 +21,22 @@ import os
 import pathlib 
 from stat import *
 from Tradingbot import models as md
+import pathlib
 
 
-path = pathlib.Path(__file__).parent.parent.parent
+path = pathlib.Path(__file__).resolve().parent.parent.parent
 logpath= os.path.join(path,'Botlogs/Angelbroker.logs')
 logpath= os.path.normpath(logpath)
 
+
+
 print(logpath,'logpath')
 logger=env.setup_logger(logpath)
+
+logger1path= os.path.join(path,'Botlogs/Frontendlog.logs')
+logpath1= os.path.normpath(logger1path)
+logpath1=env.setup_logger(logpath1)
+
 def searchscrip (Symbol,exchange,instrument):
         try:
 
@@ -40,11 +48,19 @@ def searchscrip (Symbol,exchange,instrument):
             logpath= os.path.join(path,'data/NFO.csv')
             logpath= os.path.normpath(logpath)
             if  Symbol and instrument and exchange:
-                db =db[db['exch_seg']==exchange]
-                db =db[db['instrumenttype']==instrument]
-                db =db[db['name']==Symbol]
+                if exchange=='NSE' or exchange=='BSE':
+
+                    db =db[db['exch_seg']==exchange]
+                    
+                    db =db[db['name']==Symbol]
+
+                else:
+                    db =db[db['instrumenttype']==instrument]
+                # db =db[db['exch_seg']==exchange]
+                    db =db[db['name']==Symbol]
             else:
                 db =db[db['exch_seg']==exchange]
+            db=db.rename(columns={'symbol':'TradingSymbol'})
 
             logger.info("function called searchscrip")
             
@@ -57,6 +73,8 @@ savepath= os.path.join(path,"angel.json")
 savepath= os.path.normpath(savepath)
 submitdata=[]
 tokenltp=0
+filtered_data = []
+
 class Ltp:
     def __init__(self,data,totaltoken) :
         
@@ -64,39 +82,49 @@ class Ltp:
             global findata
             global tokenltp
             global submitdata
+            global filtered_data
             findata= dict()
             self.data= {}
-            print(data)
-            
-            self.data['LTP'] =int(data['last_traded_price'])/100 
-            if data['exchange_type']==1:
-                self.data['exchange']= 'NSE'
-            elif data['exchange_type']==2:
-                self.data['exchange']= 'NFO'
-            elif data['exchange_type']==3:
-                self.data['exchange']= 'BSE'
-            elif data['exchange_type']==4:
-                self.data['exchange']= 'BFO'
-            self.data['token']= data['token']
-            self.data['volume']= data['volume_trade_for_the_day']  if 'volume_trade_for_the_day' in data.keys() else 0
+            # print(data)
             obj = md.watchlist.objects.filter(broker='ANGEL',symboltoken=data['token']).last()
-            self.data['Lotsize']= obj.lotsize
+            obj.ltp= int(data['last_traded_price'])/100
+            obj.volume= data['volume_trade_for_the_day']  if 'volume_trade_for_the_day' in data.keys() else 0
+            obj.save()
+            # if obj.symboltoken not in filtered_data:
+            #     filtered_data.append(data['token'])
 
-            self.data['Tradingsymbol']= obj.tradingsymbol
-            self.data['broker']='ANGEL'
+            #     self.data['LTP'] =int(data['last_traded_price'])/100 
+            #     if data['exchange_type']==1:
+            #         self.data['exchange']= 'NSE'
+            #     elif data['exchange_type']==2:
+            #         self.data['exchange']= 'NFO'
+            #     elif data['exchange_type']==3:
+            #         self.data['exchange']= 'BSE'
+            #     elif data['exchange_type']==4:
+            #         self.data['exchange']= 'BFO'
+            #     self.data['token']= data['token']
+            #     self.data['volume']= data['volume_trade_for_the_day']  if 'volume_trade_for_the_day' in data.keys() else 0
+            #     self.data['Lotsize']= obj.lotsize
+            #     self.data['Tradingsymbol']= obj.tradingsymbol 
+            #     self.data['broker']='ANGEL'
+            #     submitdata.append(self.data)
+
 
 
             
-            submitdata.append(self.data)
-            tokenltp=data['token']
-            print(submitdata)
+            # tokenltp=data['token']
             
-            file= open(savepath,'w')
             
-            datasub = json.dump(submitdata,file)
-            if len(submitdata)>=totaltoken:
-                submitdata=[]
-            file.close()
+
+            # if len(submitdata)>=totaltoken:
+            #     print(submitdata)
+
+            #     file= open(savepath,'w')
+
+            #     datasub = json.dump(submitdata,file)
+            #     submitdata=[]
+            #     filtered_data=[]
+            #     file.close()
             
 
 
@@ -202,6 +230,8 @@ class SMARTAPI(object) :
 
             if not data['status']:
                 logger.error(data)
+                logpath1.error(data)
+
             else:
                 tokendict={}
                 tokendict['authToken'] = data['data']['jwtToken']
@@ -218,9 +248,11 @@ class SMARTAPI(object) :
                 
                 out=open(filepath, 'w')
                 json.dump(tokendict,out,indent=6)
+                logpath1.info('Angel Login successful')
                 # out.close()
                 return True , None
         except Exception as e :
+            logpath1.error(e)
             return False,e
 
             
@@ -235,6 +267,8 @@ class SMARTAPI(object) :
                 print(loaded_dict,'loadeddict')
             return loaded_dict
         except Exception as e :
+            logpath1.error('Try login Again')
+
             print(e)
     
         
@@ -258,11 +292,16 @@ class HTTP(SMARTAPI):
     
 
 
-    def wallet(self):
-    
-    
-        data= self.smartApi.rmsLimit()
-        return data['data']
+    def checkfunds(self):
+        try :
+            data= self.smartApi.rmsLimit()
+            print(data)
+            return data['data'],None
+        
+        except Exception as e:
+            return None, e
+
+
     
     def optionchain(self,orderparam):
         print(orderparam['symbol'],''.join(orderparam['expiry']))
@@ -309,21 +348,39 @@ class HTTP(SMARTAPI):
     
     def get_quotes(self,exchangeTokens):
         mode= 'FULL'    
-        # tokens= {
-        # segment: [str(exchangeTokens)]
-        # }
-        print(exchangeTokens)
         
-        # client= self.client_()
+        
         data =self.smartApi.getMarketData(mode,exchangeTokens)
         
         return data
                 
 
-   
+    def getposition(self):
+        try:
+
+            data = self.smartApi.position()
+            print(data)
+            return data['data'], None
+        except Exception as e:
+            return None,e
+
     
-    
-    
+    def allholding(self):
+        try:
+
+            data = self.smartApi.allholding()
+            return data['data'], None
+        except Exception as e:
+            return None,e
+
+
+
+
+
+
+
+
+
     def cancel_order(self, orderid):
         data = self.smartApi.cancelOrder(orderid, "NORMAL")
         return data
@@ -384,9 +441,14 @@ class HTTP(SMARTAPI):
             "price": float(orderparam['ltp']),
             "squareoff": "0",
             "stoploss": "0",
-            "quantity": int(quantity)}
+            "quantity": int(quantity),
+            "disclosedquantity": int(orderparam['discloseqty'])
+            
+            }
             if not PAPER:
                 orderid = self.smartApi.placeOrder(orderparams)
+                print(orderid)
+                
 
                 if orderid:
                     
@@ -401,11 +463,17 @@ class HTTP(SMARTAPI):
                     orderparam['broker']='ANGEL'
                     orderparam['avg_price']=status['price'].iloc[-1]
                     orderobject(orderparam)
-            
-            
+                    logpath1.info(f'Broker Angel order palced,orderid:{orderid}')
+                
+
+
             return   orderid
         except Exception as e:
             logger.error(e,exc_info=True)
+            logpath1.error(e)
+            orderobject(orderparam)
+
+
     
     
     
@@ -418,33 +486,38 @@ class HTTP(SMARTAPI):
         logger.info(f"Order Book: {data}")
         return data
 
-    def order_history(self):
+    def orderBook(self):
 
         data = self.smartApi.orderBook()
         logger.info(f"Order Book: {data}")
-        return data
-    def modifyorder(self,exchange,tradingsymbol, orderno, newprice,PAPER,orderobject):
-        print('here',PAPER)
-        
-        orderparams = {
-        "variety": "NORMAL",
-        "orderid": orderno,
-        "price":newprice,
-        }
-        orderid = None
-        if not PAPER:
-            orderid = self.smartApi.modifyOrder(orderparams)
+        return data['data']
+    def modifyorder(self,data,orderobject):
+        try:
 
-        orderobject.sellorderstatus= 'MODIFIED'
-        orderobject.sellprice= float(newprice)
+            orderparams = {
+            "variety": "NORMAL",
+            "orderid": orderobject.orderid,
+            "price":data['ltp'],
+            "producttype":data['product_type'],
+            "ordertype":data['ordertype'],
+            "tradingsymbol":orderobject.tradingsymbol,
+            "quantity":str(data['quantity']),
+            "symboltoken":orderobject.symboltoken,
 
-        if PAPER:
-            # orderobject.status=False
-            pass
-
-
-        orderobject.save()
-        return orderid
+            }
+            orderiddta = self.smartApi.modifyOrder(orderparams)
+            if orderiddta['data']:
+                orderobject.quantity= data['quantity']
+                orderobject.ordertype= data['ordertype']
+                orderobject.product_type= data['product_type']
+                orderobject.avg_price= data['ltp']
+                orderobject.transactiontype= data['transactiontype']
+                orderobject.discloseqty= data['discloseqty']
+                orderobj.orderid=orderiddta['orderid']
+                orderobject.save()
+                return orderiddta['data'], None
+        except Exception as e:
+            return None,e
 class WebSocketConnect(SMARTAPI):
     def __init__(self,username = '',pwd = '',api_key ='',token=""):
         super().__init__(username,pwd,api_key ,token)
@@ -467,7 +540,7 @@ class WebSocketConnect(SMARTAPI):
             try:
                 TOKENS = {"exchangeType":1,"tokens":[],'action':0}
 
-                obj = md.watchlist.objects.filter(subscribe=True,broker='ANGEL')
+                obj = md.watchlist.objects.filter(subscribe=False,broker='ANGEL')
                 tokenlist=[]
                 for  i in obj:
                         
@@ -516,40 +589,56 @@ class WebSocketConnect(SMARTAPI):
             """
             
             try:
+                tokend= 0
                 
                 obj = md.watchlist.objects.filter(subscribe=True,broker='ANGEL')
                 tokenlist=[]
                 self.objlen= len(set(obj))
                 TOKENS = {"exchangeType":1,"tokens":[]}
+                TOKENS1 = {"exchangeType":1,"tokens":[]}
+                TOKENS2 = {"exchangeType":1,"tokens":[]}
+                TOKENS3 = {"exchangeType":1,"tokens":[]}
+                TOKENS4 = {"exchangeType":1,"tokens":[]}
+
+
                 
                 
                 for  i in obj:
+                        print(i.symboltoken)
+                    
                         if i.exchange=='NSE':
                             TOKENS['exchangeType']=1
                             TOKENS['tokens'].append(i.symboltoken)
                             TOKENS['tokens']= list(set(TOKENS['tokens']))
-                        elif i.exchange=='NFO':
-                            TOKENS['exchangeType']=2
+                            tokenlist.append(TOKENS)
 
+                        elif i.exchange=='NFO':
+                            TOKENS1['exchangeType']=2
                            
-                            TOKENS['tokens'].append(i.symboltoken)
-                            TOKENS['tokens']= list(set(TOKENS['tokens']))
+                            TOKENS1['tokens'].append(i.symboltoken)
+                            TOKENS1['tokens']= list(set(TOKENS1['tokens']))
+                            tokenlist.append(TOKENS1)
+
 
 
                              
                         elif i.exchange=='BSE':
-                            TOKENS['exchangeType']=3
+                            TOKENS2['exchangeType']=3
                            
-                            TOKENS['tokens'].append(i.symboltoken)
-                            TOKENS['tokens']= list(set(TOKENS['tokens']))
+                            TOKENS2['tokens'].append(i.symboltoken)
+                            TOKENS2['tokens']= list(set(TOKENS2['tokens']))
+                            tokenlist.append(TOKENS2)
+    
 
 
                              
                         elif i.exchange=='BFO':
-                            TOKENS['exchangeType']=4
+                            TOKENS3['exchangeType']=4
                         
-                            TOKENS['tokens'].append(i.symboltoken)
-                            TOKENS['tokens']= list(set(TOKENS['tokens']))
+                            TOKENS3['tokens'].append(i.symboltoken)
+                            TOKENS3['tokens']= list(set(TOKENS3['tokens']))
+                            tokenlist.append(TOKENS3)
+
 
                           
                         elif i.exchange=='MCX':
@@ -557,14 +646,19 @@ class WebSocketConnect(SMARTAPI):
                           
                             TOKENS['tokens'].append(i.symboltoken)
                             TOKENS['tokens']= list(set(TOKENS['tokens']))
+                        tokend= i.symboltoken
+                        # TOKENS['exchangeType']=0
+                        # TOKENS['tokens']=[]
 
-                        
-                        tokenlist.append(TOKENS)
+
+
 
                         
                 return tokenlist
             except Exception as e :
                 print(e)
+                logger1path.error(e)
+
     
 
         
@@ -592,7 +686,7 @@ class WebSocketConnect(SMARTAPI):
             self.sws.close_connection()
 
         def on_data(wsapp, message):
-            # logger.info("Ticks: {}".format(message))
+            logger.info("Ticks: {}".format(message))
             Ltp(message,self.objlen)
 
             objnew,newevent= self.newevent()

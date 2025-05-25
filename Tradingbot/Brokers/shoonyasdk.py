@@ -26,11 +26,15 @@ import math
 import pickle
 
 # from random import randint
-
+from Tradingbot import env
 from .ShoonyaApi.api_helper import ShoonyaApiPy
 from datetime import datetime, timedelta
 import os 
 from pathlib import Path
+import pathlib
+
+
+path = pathlib.Path(__file__).resolve().parent.parent.parent
 # import ThreadPoolExecutor
 log = logging.getLogger(__name__)
 api = ShoonyaApiPy()
@@ -40,6 +44,12 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 #   
+
+
+logger2path= os.path.join(path,'Botlogs/Frontendlog.logs')
+logpathfron= os.path.normpath(logger2path)
+logpathfron=env.setup_logger(logpathfron)
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 def optionchain (name,exchange='NFO',instrument=''):
@@ -122,47 +132,20 @@ class Ltp:
     def __init__(self,data) :
         
         try:
-            global findata
-            global tokenltp
-            findata= dict()
+           
 
             if data['t']=='tk' and data['tk']!=tokenltp:    
-                print('check acknowl',data)
-
-                findata['LTP'] =data['lp']
-                findata['exchange']= data['e']
-                findata['broker']='SHOONYA'
-                findata['token']= data['tk']
-                findata['Tradingsymbol']= data['ts']
-                findata['Lotsize']= data['ls']
-                findata['volume']= data['v'] if 'v' in data.keys() else 0
-                tokenltp= data['tk']
-
-                submitdata.append(findata)
-                print(submitdata)
-                file= open(savepath,'w')
-                datasub = json.dump(submitdata,file)
-                file.close()
-            
-
+                
+                obj = md.watchlist.objects.filter(broker='SHOONYA',symboltoken=data['tk']).last()
+                obj.ltp= data['lp']
+                obj.volume= data['v']  if 'v' in data.keys() else 0
+                obj.save()
 
             if data['t']=='tf':
-
-                if 'lp' in  data.keys():
-                    with open(savepath,'r+') as incomingfile:
-                        data1 = json.load(incomingfile)
-                        print(data1,'incomingfile')
-                        incomingfile.seek(0)
-                        for i in range(len(data1)):
-                            if data['tk']==data1[i]['token']:
-                                data1[i]['LTP'] =data['lp']
-                                data1[i]['exchange']= data['e']
-                                data1[i]['broker']='SHOONYA'
-                                data1[i]['token']= data['tk']
-                                data1[i]['volume']= data['v'] if 'v' in data.keys() else 0
-                        datasub = json.dump(data1,incomingfile, indent=4)
-                        incomingfile.truncate()
-                        incomingfile.close()
+                obj = md.watchlist.objects.filter(broker='SHOONYA',symboltoken=data['tk']).last()
+                obj.ltp= data['lp']
+                obj.volume= data['v']  if 'v' in data.keys() else 0
+                obj.save()
                         
                 
         
@@ -188,14 +171,13 @@ class Ltp:
 class shoonyasetup(object):
     def __init__(self, user=1, pwd='', vendorcode= '',app_key='', imei='',token=''):
 
-        broker = md.Broker.objects.filter(brokername='SHOONYA').last()
         self.user = user  
-        self.pwd = broker.password
-        self.app_key = broker.apikey
+        self.pwd = pwd
+        self.app_key = app_key
         self.imei = 'abc1234'
-        self.vendorcode= broker.vendorcode
+        self.vendorcode= vendorcode
         self.auth=None
-        token= broker.AuthToken
+        token= token
         self.baseurl = 'https://api.shoonya.com/NorenWClientTP/'
         self.otp = pyotp.TOTP(token).now()
         
@@ -214,6 +196,7 @@ class shoonyasetup(object):
                 token= json.load(file)
             return token
         except Exception as e:
+            logpathfron.error('Try Login Again')
             print(e)
         # api = ShoonyaApiPy()
         
@@ -226,6 +209,8 @@ class shoonyasetup(object):
             token={}
             if res['stat']=='Ok':
                 token= {"Token":res['susertoken'],"uid":res['uid'],"actid":res['actid']}
+                logpathfron.info('Login sucessful')
+
                 
             # token= json.dumps(token)
             print(token)
@@ -246,8 +231,13 @@ class shoonyasetup(object):
             finalout=open(logpath, 'w')
             json.dump(token, finalout)
             finalout.close()
+            if res['stat']=='Ok':
+                logpathfron.info('Shoonya Login sucessful')
+
+
             return True,None
         except Exception as e:
+            logpathfron.error(e)
             return False,e
 
     def logout(self):
@@ -288,130 +278,163 @@ class HTTP(shoonyasetup):
     #         super().__init__(self)
     #         self.user=user
     #         self.api=self.get_shoonya_client()
-    def wallet(self):
+ 
     
-        """Get a list of accounts.
-
-        Required args:
-            None
-        """
-        """"api endpoint to fetch balance and account detail
-        *kwargs: symbol (not mandatory)
-        """
-        data= api.get_limits()
-        return data
+    # cancel modify orderbook replacement
     
 
+    def cancel_order (self,orderid):
+        try:
+            
+      
+            param= dict()
+            data= dict()
+            tokenkey=self.gettoken()
+            param['uid']= tokenkey['uid']
+            param['actid']=tokenkey['actid']
+            param['prd']='C'
+            param['norenordno']=orderid
     
-    def cancel_order(self, orderno):
-        data = api.cancel_order( orderno=orderno)
-        return data
-    
-    
-    def modifyorder(self,exchange, tradingsymbol, orderno, newprice,PAPER,orderobject):
+            param= json.dumps(param)
+            data = "jData="+param+"&jKey="+tokenkey['Token']
+            ret= requests.post(self.baseurl+"CancelOrder",data=data)
+            findata= dict()
+            if ret.status_code==200:
+                position =ret.json()
+                print(position)
+                                
+                return position
+            else:
+                    return None
 
-        data= None
-        
-        if not PAPER:
-            data = api.modify_order(exchange= exchange,
-                                        tradingsymbol=tradingsymbol,
-                                        orderno=orderno, newprice=newprice,newtrigger_price=newprice+1)
-        orderobject.sellorderstatus='MODIFIED'
-        orderobject.sellprice= float(newprice)
-        if PAPER:
-            # orderobject.status=False
-            pass
-        
-        orderobject.save()
-        return data
+
+        except Exception as e:
+            print(e)
+            return None
+
     
+    def modifyorder(self,data,orderobject):
+
+        try:
+            
+      
+            param= dict()
+            data= dict()
+            tokenkey=self.gettoken()
+            param['uid']= tokenkey['uid']
+            param['actid']=tokenkey['actid']
+            param['prd']='C'
+            param['norenordno']=orderobject.orderid
+            param['qty']=data['quantity']
+            param['tsym']=data['tradingsymbol']
+            param['prc']=data['ltp']
+            param['prctyp']=data['product_type']
+
+            
 
 
-    def order_history(self,orderid):
-        """
-        Info :Get order status by order id  
-        args: orderid 
-        """
-        data = api.single_order_history(orderid=orderid)
-        return data
+    
+            param= json.dumps(param)
+            data = "jData="+param+"&jKey="+tokenkey['Token']
+            ret= requests.post(self.baseurl+"ModifyOrder",data=data)
+            findata= dict()
+            if ret.status_code==200:
+                
+                position =ret.json()
+                if position['stat']=='Ok':
+                    orderobj.orderid=position['result']
+                
+                    orderobj.save()
+                                
+                    return position,None
+                else:
+                    return None,position['emsg']
+
+
+        except Exception as e:
+            print(e)
+            return None,e
+
+
     
   
     
     def placeorder(self,orderparam,orderobject,STOPLOSS,PAPER):
-        
-        exchange_segment= orderparam['exchange']
-        buy_or_sell=orderparam['transactiontype']
-        if orderparam['product_type'].upper()== "INTRADAY":
-            product_type="I"
-        elif orderparam['product_type'].upper() == "CARRYFORWARD":
-            product_type="M"
-        elif orderparam['product_type'].upper() == "DELIVERY":
-            product_type="C"
-
-        if orderparam['transactiontype'].upper()== "BUY":
-            buy_or_sell='B'
-        elif orderparam['transactiontype'].upper() == "SELL":
-            buy_or_sell='S'
-
-        price_type= 'MKT' if orderparam['ordertype']=='MARKET' else "LMT"
-        price=orderparam['ltp']
-        tradingsymbol=orderparam['tradingsymbol']
-        discloseqty='0'
-        trigger_price='0'
-        retention='IOC'
-        remarks='NA'
-        amo='NO'
-        data= None
-        orderparam['avg_price']=orderparam['ltp']
-        orderparam['status']=True
+        try:
 
         
+            exchange_segment= orderparam['exchange']
+            buy_or_sell=orderparam['transactiontype']
+            if orderparam['product_type'].upper()== "INTRADAY":
+                product_type="I"
+            elif orderparam['product_type'].upper() == "CARRYFORWARD":
+                product_type="M"
+            elif orderparam['product_type'].upper() == "DELIVERY":
+                product_type="C"
 
-        if not PAPER:
-            param= dict()
-            tokenkey=self.gettoken()
-            param['uid']= tokenkey['uid']
-            param['exch']=exchange_segment
-            param['actid']=tokenkey['actid']
-            param['tsym']=tradingsymbol
-            param['qty']=str(orderparam['quantity'])
-            param['prc']=str(orderparam['ltp'])
-            param['trgprc']=trigger_price
-            param['dscqty']=str(discloseqty)
-            param['prd']=product_type
-            param['trantype']=buy_or_sell
-            param['prctyp']=price_type
-            param['ret']=retention
-            param= json.dumps(param)
-            data = "jData="+param+"&jKey="+tokenkey['Token']
-            print(data)
-            ret= requests.post(self.baseurl+"PlaceOrder",data=data)
-            print(ret.text,ret.json().keys(),'keyssssssssssss>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-            if ret.status_code==200:
-                ret=ret.json()
-                status=self.order_history(str(ret['norenordno']),tokenkey)
-                orderparam['orderid']=ret['norenordno']
-                orderparam['orderstatus']= status['status'].upper()
-                orderparam['status']=True if status['status'].upper()=='COMPLETE' else False
-                orderparam['user']=1
-                orderparam['broker']='SHOONYA'
-                orderparam['avg_price']=status['prc']
-                orderobject(orderparam)
-                return data
+            if orderparam['transactiontype'].upper()== "BUY":
+                buy_or_sell='B'
+            elif orderparam['transactiontype'].upper() == "SELL":
+                buy_or_sell='S'
+
+
             
-            else:
-                return None
+            price_type= 'MKT' if orderparam['ordertype']=='MARKET' else "LMT"
+            price=orderparam['ltp']
+            tradingsymbol=orderparam['tradingsymbol']
+            discloseqty=int(float(orderparam['discloseqty']))
+            trigger_price='0'
+            retention='IOC'
+            remarks='NA'
+            amo='NO'
+            data= None
+            orderparam['avg_price']=orderparam['ltp']
+            orderparam['status']=True
+
+            
+
+            if not PAPER:
+                param= dict()
+                tokenkey=self.gettoken()
+                param['uid']= tokenkey['uid']
+                param['exch']=exchange_segment
+                param['actid']=tokenkey['actid']
+                param['tsym']=tradingsymbol
+                param['qty']=str(orderparam['quantity'])
+                param['prc']=str(orderparam['ltp'])
+                param['trgprc']=trigger_price
+                param['dscqty']=str(discloseqty)
+                param['prd']=product_type
+                param['trantype']=buy_or_sell
+                param['prctyp']=price_type
+                param['ret']=retention
+                param= json.dumps(param)
+                data = "jData="+param+"&jKey="+tokenkey['Token']
+                print(data)
+                ret= requests.post(self.baseurl+"PlaceOrder",data=data)
+                print(ret.text,ret.json().keys(),'keyssssssssssss>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+                if ret.status_code==200:
+                    ret=ret.json()
+                    status=self.order_history(str(ret['norenordno']),tokenkey)
+                    orderparam['orderid']=ret['norenordno']
+                    orderparam['orderstatus']= status['status'].upper()
+                    orderparam['status']=True if status['status'].upper()=='COMPLETE' else False
+                    orderparam['user']=1
+                    orderparam['broker']='SHOONYA'
+                    orderparam['avg_price']=status['prc']
+                    orderobject(orderparam)
+                    logpathfron.info(f'Broker Shoonya order placed, orderid :{ret['norenordno']}')
+
+                    return data
+                
+                else:
+                    return None
+        except Exception as e:
+            logpathfron.error(e)
 
            
 
-            
-            # data = api.place_order(buy_or_sell,product_type,exchange_segment, tradingsymbol, orderparam['quantity'], discloseqty,price_type, price, trigger_price)
-            # status=self.order_history(str(data['norenordno']))
-            # status= status[0]
-            # orderparam['buyorderid']=data['norenordno']
-            # orderparam['orderstatus']= status['status'].upper()
-            # orderparam['status']=True if status['status'].upper()=='COMPLETE' else False
-
+       
 
 
 
@@ -435,76 +458,156 @@ class HTTP(shoonyasetup):
 
         return ret
     
-    
-    def get_order_book(self):
-        """
-        Info :Get order status
-        """
-        data = api.get_order_book()
-        return data
-    def searchscrip(self,exchange,SymbolName,ExpDate=None,type_=None,strike=[]):
-        
-        symbol = None
-        Symbol= SymbolName
-        symbolLIST= []
-        nfo=[]
-        
-        for i in range(len(strike)):
-            x= f'{SymbolName}{ExpDate}{type_}{strike[i]}'
-            symbolLIST.append(x)
-            nfo.append(exchange)
-
-        token= []
-        symbolslist= []
-        tradesymbols= None
-        ret=[]
-        ret = list(map(api.searchscrip,nfo,symbolLIST))
-        if ret != []:
-            for i in range(len(ret)):
-                symbols = ret[i]['values']
-                for symbol in symbols:
-                    token.append(symbol['token'])
-                    symbolslist.append(symbol['tsym'])
-# 
-        return symbolslist,token
-
+   
     
 
-    def get_quotes (self,exchange,TK):
+
+    def getposition (self):
         try:
         
-        
-        # print(TK)
-            #ret = api.get_quotes(exchange=exchange, token=str(TK))
+      
             param= dict()
             data= dict()
             tokenkey=self.gettoken()
             param['uid']= tokenkey['uid']
-            param['exch']=exchange
-            param['token']= str(TK)
             param['actid']=tokenkey['actid']
-            # data['jData']=param
+    
             param= json.dumps(param)
-            # param=str([param])
             data = "jData="+param+"&jKey="+tokenkey['Token']
-            ret= requests.post(self.baseurl+"GetQuotes",data=data)
+            ret= requests.post(self.baseurl+"PositionBook",data=data)
+
+            print(ret.text,ret.json().keys(),'keyssssssssssss>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+            findata= dict()
+            listfin=[]
+            if ret.status_code==200:
+                position =ret.json()
+                if position['stat']=='Ok':
+                    for i in position:
+                            
+                        findata['exchange'] = i['exch']
+                        findata['tradingsymbol'] = i['tsym']
+                        findata['buyavgprice'] = i['daybuyavgprc']
+                        findata['sellavgprice'] = i['daysellavgprc']
+                        findata['netqty'] = i['netqty']
+                        findata['ltp'] = i['lp']
+                        findata['lotsize'] = i['ls']
+                        findata['unrealised'] = i['urmtom']
+                        findata['realised'] = i['rpnl']
+                        listfin.append(finaldata)
+                
+                    return listfin ,None
+                else:
+                    return None,'Not found'
+
+
+        except Exception as e:
+            print(e)
+            return None,e
+
+    
+    def allholding (self):
+        try:
+            
+      
+            param= dict()
+            data= dict()
+            tokenkey=self.gettoken()
+            param['uid']= tokenkey['uid']
+            param['actid']=tokenkey['actid']
+            param['prd']='C'
+    
+            param= json.dumps(param)
+            data = "jData="+param+"&jKey="+tokenkey['Token']
+            ret= requests.post(self.baseurl+"Holdings",data=data)
+            print(ret)
+            findata= dict()
+            listfin=[]
+            if ret.status_code==200:
+                position =ret.json()
+                print(position)
+                if not  position==[]:
+                    for i in position:
+                            
+                        findata['exchange'] = i['exch_tsym'][0]['exch']
+                        findata['tradingsymbol'] = i['exch_tsym'][2]['tsym']
+                        findata['symboltoken'] = i['exch_tsym'][1]['token']
+                        findata['quantity'] = i['holdqty']
+                        findata['averageprice'] = i['upldprc']
+
+
+                        listfin.append(finaldata)
+                
+                    return listfin ,None
+                else:
+                    return None,'Not found'
+
+
+        except Exception as e:
+            print(e)
+            return None,e
+
+
+    def orderbook (self):
+        try:
+            
+      
+            param= dict()
+            data= dict()
+            tokenkey=self.gettoken()
+            param['uid']= tokenkey['uid']
+            param['actid']=tokenkey['actid']
+            param['prd']='C'
+    
+            param= json.dumps(param)
+            data = "jData="+param+"&jKey="+tokenkey['Token']
+            ret= requests.post(self.baseurl+"OrderBook",data=data)
+            findata= dict()
+            listfin=[]
+            if ret.status_code==200:
+                position =ret.json()
+                print(position)
+                                
+                return position
+            else:
+                    return None
+
+
+        except Exception as e:
+            print(e)
+            return None
+
+
+    def checkfunds (self):
+        try:
+        
+      
+            param= dict()
+            data= dict()
+            tokenkey=self.gettoken()
+            param['uid']= tokenkey['uid']
+            # param['exch']=exchange
+            # param['token']= str(TK)
+            param['actid']=tokenkey['actid']
+    
+            param= json.dumps(param)
+            data = "jData="+param+"&jKey="+tokenkey['Token']
+            ret= requests.post(self.baseurl+"Limits",data=data)
 
             print(ret.text,ret.json().keys(),'keyssssssssssss>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
             
             if ret.status_code==200:
-                return ret.json()
+                cash =ret.json()
+                cash = cash['cash']
+                return cash ,None
             
-            elif ret['stats']=='Not_Ok':
-                return None
-            else:
-                return None
+          
 
         except Exception as e:
             print(e)
+            return None,e
 
-    def getindex (self):
-        ret= api.GetIndexList()
-        return ret
+
+
     
     
 

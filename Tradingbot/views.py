@@ -13,15 +13,16 @@ from django.views.decorators.csrf import csrf_protect
 from . import serializers as ser 
 from . import models as md
 import datetime
-from .Brokers import shoonyasdk,Angelsdk
+from .Brokers import shoonyasdk,Angelsdk,motilalsdk,growwsdk,dhansdk,flattradesdk,stoxkartsdk
 from .utility import utility
 from . import env
 import os
 import pathlib
-path = pathlib.Path(__file__).parent.parent
+path = pathlib.Path(__file__).resolve().parent.parent
 logpath= os.path.join(path,'Botlogs/Frontendlog.logs')
 logpath= os.path.normpath(logpath)
 import json
+import pytz
 
 print(logpath,'logpath')
 logger=env.setup_logger(logpath)
@@ -66,17 +67,17 @@ class broker(GenericAPIView):
         try:
             users = request.user
             if request.GET.get('broker').lower()=='shoonya':
-                proj= md.Broker.objects.filter(user=users.id,brokername='SHOONYA').values('brokerid','Username','accountnumber','brokername','active','apikey','pasword',
+                proj= md.Broker.objects.filter(user=users.id,brokername='SHOONYA').values('brokerid','Username','accountnumber','brokername','active','apikey','password',
                                                                  'vendorcode','AuthToken')
-            elif request.GET.get('broker').lower()=='all':
-                proj= md.Broker.objects.filter(user=users.id).values('brokerid','accountnumber','brokername')
-            
 
-            elif request.GET.get('broker').lower()=='angegl':
-                proj= md.Broker.objects.filter(user=users.id,brokername='ANGEL').values('brokerid','accountnumber','brokername','active','apikey','pasword','secretkey','AuthToken')
+            elif request.GET.get('broker').lower()=='angel':
+                proj= md.Broker.objects.filter(user=users.id,brokername='ANGEL').values('brokerid','accountnumber','brokername','active','apikey','password','secretkey','AuthToken')
             
             else:
                 proj = []
+            if request.GET.get('account').lower()=='all':
+                proj= md.Broker.objects.filter(user=users.id,valid=True,brokername=request.GET.get('broker').upper()).values('brokerid','accountnumber','brokername')
+            
 
             
             return Response({"message":proj})
@@ -202,14 +203,14 @@ brokerlist=[
     {"NAME":"ANGEL"},
     {"NAME":"SHOONYA"},
     {"NAME":"DHAN"},
-    {"NAME":"FYERS"},
     {"NAME":"MOTILAL"},
-    {"NAME":"ANANDRATHI"},
+    # {"NAME":"ANANDRATHI"},
     {"NAME":"GROWW"},
+    {"NAME":"FYERS"},
     {"NAME":"ZERODHA"},
     {"NAME":"SAMCO"},
     {"NAME":"FLATTRADE"},
-    {"NAME":"BIGUL"},
+    # {"NAME":"BIGUL"},
     {"NAME":"STOXKART"}
 
     
@@ -232,19 +233,43 @@ class Getsymbols(GenericAPIView):
             data1= dict()
             if request.GET.get('Broker')=='all':
                 datas= brokerlist
-            if request.GET.get('Broker').lower()== "shoonya":
+
+            else:
                 exchange = request.GET.get('exchange')
                 instrument = request.GET.get('instrument')
                 name = request.GET.get('name')
+                if request.GET.get('Broker').lower()== "shoonya":
+                
 
 
-                datas=shoonyasdk.optionchain(name.upper(),exchange.upper(),instrument.upper())
-            if request.GET.get('Broker').lower()=="angel":
-                exchange = request.GET.get('exchange')
-                instrument = request.GET.get('instrument')
-                name = request.GET.get('name')
-                datas= Angelsdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
+                    datas=shoonyasdk.optionchain(name.upper(),exchange.upper(),instrument.upper())
+                if request.GET.get('Broker').lower()=="angel":
+                   
+                    datas= Angelsdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
+
+                
+                if request.GET.get('Broker').lower()=="motilal":
+                    datas= motilalsdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
+
+                if request.GET.get('Broker').lower()=="groww":
+                    datas= growwsdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
+
+                if request.GET.get('Broker').lower()=="dhan":
+                    datas= dhansdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
+               
+                if request.GET.get('Broker').lower()=="flattrade":
+                    datas= flattradesdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
+                if request.GET.get('Broker').lower()=="stoxkart":
+                    datas= stoxkartsdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
+
+
+                
+
+
+                
             print(datas)
+
+
 
 
                 # datas = datas.to_dict(orient="records")
@@ -263,6 +288,34 @@ class Getsymbols(GenericAPIView):
 class placeorder (GenericAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+    def get(self, request, *args, **kwargs):
+
+
+        try:
+            users = request.user
+            dash=utility(users)
+            oderids= request.GET.get('selectedRows')
+            oderids= eval(oderids)
+            print(type(oderids),oderids)
+            dash.cancel_order(oderids)
+
+            
+           
+
+
+
+            return Response({"message":'ok'},status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            return Response({
+                    "message": [],
+                    "code": status.HTTP_400_BAD_REQUEST
+                },  
+                status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 
@@ -273,18 +326,26 @@ class placeorder (GenericAPIView):
             print(request.data)
             data['broker']= request.data.get('brokerName4')
             data['exchange'] = request.data.get('exchange')
+            data['instrument'] = request.data.get('instrument')
             data['tradingsymbol'] = request.data.get('selectsymbol')
             data['ltp'] = request.data.get('price')
             data['symboltoken'] = request.data.get('token')
-
-
             data['quantity'] = request.data.get('quantity')
             data['ordertype'] =request.data.get('orderType')
             data['product_type'] = request.data.get('product')
             data['transactiontype'] = request.data.get('side')
             data['account'] = request.data.get('accountname')
+            data['discloseqty'] = request.data.get('discloseqty')
+
+
+            
             dash=utility(user)
-            oid=dash.placeorder(data)
+            if request.data.get('modify'):
+                data['orderid']= request.data.get('orderid')
+                oid=dash.modifyorder(data)
+            else :
+                oid=dash.placeorder(data)
+
             
             
                     
@@ -367,7 +428,6 @@ class logoutbroker (GenericAPIView):
             )
 
 
-
 class postionsobj(GenericAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -377,17 +437,16 @@ class postionsobj(GenericAPIView):
             finaldata= []
             users = request.user.id
             data = dict()
-            if request.GET.get('type')== "open":
-                data=md.orderobject.objects.filter(user=users,status=True).values('updated_at','orderid','tradingsymbol','symboltoken','quantity','avg_price',
-                                                                                  'exchange','broker','accountno','side','orderstatus' )
-            elif  request.GET.get('type')== "close":
-                data=md.orderobject.objects.filter(user=users,status=False).values('updated_at','orderid','tradingsymbol','symboltoken','quantity','avg_price',
-                                                                                  'exchange','broker','accountno','side','orderstatus' )
+            start= datetime.datetime.now(tz= pytz.timezone('Asia/Kolkata')).replace(hour=23, minute=59, second=0, microsecond=0)
+            end = start- datetime.timedelta(days=1)
+            print(end,start)
+            dash=utility(users)
             
-            elif  request.GET.get('type')== "all":
-                data=md.orderobject.objects.filter(user=users).values('updated_at','orderid','tradingsymbol','symboltoken','quantity','avg_price',
-                                                                      'exchange','broker','accountno','side','orderstatus')
+            dash.orderstatus()
 
+            if  request.GET.get('type')== "all":
+                data=md.orderobject.objects.filter(user=users,updated_at__range=(end,start)).values('id','updated_at','orderid','tradingsymbol','symboltoken','quantity','avg_price',
+                                                                      'exchange','broker','accountnumber','side','orderstatus','transactiontype','instrument')
 
             
             
@@ -546,9 +605,9 @@ class sendlog(GenericAPIView):
             with open (logpath) as file:
                 # data= json.load(file)
                 data=file.readlines()
-                print(data)
 
                 file.close
+                data.reverse()
 
             
 
@@ -562,5 +621,88 @@ class sendlog(GenericAPIView):
                     "code": status.HTTP_400_BAD_REQUEST
                 },  
                 status=status.HTTP_400_BAD_REQUEST)
+
+
+class getfunds(GenericAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            user = request.user
+
+            dash=utility(user)
+            oid=dash.checkfunds()
+            data = md.Broker.objects.filter(valid= True).values('brokername','nickname','accountnumber','funds')
+
+            
+
+
+            return Response({"message":data})
+
+        except Exception as e:
+            print(e)
+            return Response({
+                    "message": [],
+                    "code": status.HTTP_400_BAD_REQUEST
+                },  
+                status=status.HTTP_400_BAD_REQUEST)
+
+
+class getposition(GenericAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            user = request.user
+
+            dash=utility(user)
+
+            oid=dash.getposition()
+            data = md.Allpositions.objects.filter(user=1).values()
+
+            
+
+
+            return Response({"message":data})
+
+        except Exception as e:
+            print(e)
+            return Response({
+                    "message": [],
+                    "code": status.HTTP_400_BAD_REQUEST
+                },  
+                status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class getholding(GenericAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            user = request.user
+
+            dash=utility(user)
+
+            oid=dash.getholding()
+            data = md.allholding.objects.filter(user=1).values()
+
+            
+
+
+            return Response({"message":data})
+
+        except Exception as e:
+            print(e)
+            return Response({
+                    "message": [],
+                    "code": status.HTTP_400_BAD_REQUEST
+                },  
+                status=status.HTTP_400_BAD_REQUEST)
+
 
 

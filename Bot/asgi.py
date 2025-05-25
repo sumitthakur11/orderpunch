@@ -22,6 +22,6 @@ application = ProtocolTypeRouter({
     "websocket": URLRouter(websocket_urlpatterns),
 })
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Bot.settings')
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Bot.settings')
 
 # application = get_asgi_application()

@@ -43,3 +43,15 @@ class watchlist(serializers.ModelSerializer):
     class Meta:
         model = md.watchlist
         fields = "__all__"
+
+
+
+class Allpositions(serializers.ModelSerializer):
+    class Meta:
+        model = md.Allpositions
+        fields = "__all__"
+class allholding(serializers.ModelSerializer):
+    class Meta:
+        model = md.allholding
+
+        fields = "__all__"
