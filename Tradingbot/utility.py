@@ -1,6 +1,6 @@
 import Tradingbot.models as md 
 import Tradingbot.serializers as ser 
-from .Brokers import shoonyasdk,Angelsdk,motilalsdk,growwsdk,dhansdk,flattradesdk,stoxkartsdk
+from .Brokers import shoonyasdk,Angelsdk,motilalsdk,growwsdk,dhansdk,flattradesdk,stoxkartsdk,fyerssdk
 from concurrent.futures import ThreadPoolExecutor
 import pathlib 
 import os
@@ -9,7 +9,7 @@ import asyncio
 path = pathlib.Path(__file__).parent.parent
 from Tradingbot import env
 
-
+import threading
 import time
 import platform
 print(platform.version())
@@ -19,7 +19,6 @@ logpathfron= os.path.normpath(logger2path)
 logpathfron=env.setup_logger(logpathfron)
 
 
-stoxkartsdk.searchscrip('','NSE','EQ')
 
 
 class utility:
@@ -43,7 +42,9 @@ class utility:
             return self.broker
 
         def loginbroker(self,data):
+            print(data['brokerid'])
             br= md.Broker.objects.filter(brokerid=data['brokerid']).last()
+            print(br.brokername)
             if br.brokername.lower()=='shoonya':
                 bruser= br.accountnumber
                 pwd= br.password
@@ -84,59 +85,169 @@ class utility:
                      
                      return excp
 
+
+            elif br.brokername.lower()=='fyers':
+                bruser= br.accountnumber
+                secret_key= br.secretkey
+                token= br.AuthToken
+
+                self.fyers = fyerssdk.fyerssetup(bruser,secret_key,token)
+                t = threading.Thread(target=self.fyers.login)
+                t.start()   
+
+
+            elif br.brokername.lower()=='motilal':
+                bruser= br.accountnumber
+                pwd= br.password
+                apikey= br.apikey
+                token= br.AuthToken
+                self.motilal = motilalsdk.motilalsetup(bruser,pwd,apikey,token)
+                flag,excp =self.motilal.login()
+                if flag:
+                     br.valid=True
+                     br.save()
+                else: 
+                     br.valid=False
+                     br.save()
+
+                     
+                     
+                     return excp
+            elif br.brokername.lower()=='GROWW':
+                bruser= br.accountnumber
+                pwd= br.password
+                apikey= br.apikey
+                token= br.AuthToken
+                self.motilal = growwsdk.growwsetup(token)
+                flag,excp =self.motilal.login()
+                if flag:
+                     br.valid=True
+                     br.save()
+                else: 
+                     br.valid=False
+                     br.save()
+
+                     
+                     
+                     return excp
+
+
         def checkfunds(self):
             accountlist= md.Broker.objects.filter(user=1,valid=True)
             for br in accountlist:
-                if br.brokername.lower()=='shoonya':
-                    print(br.brokername)
-                    bruser= br.accountnumber
-                    pwd= br.password
-                    vendorcode=br.vendorcode
-                    apikey= br.apikey
-                    imei= br.imei
-                    token= br.AuthToken
+                print(br.brokername)
+                if br.active:
+                    if br.brokername.lower()=='shoonya':
+                        print(br.brokername)
+                        bruser= br.accountnumber
+                        pwd= br.password
+                        vendorcode=br.vendorcode
+                        apikey= br.apikey
+                        imei= br.imei
+                        token= br.AuthToken
 
-                    self.broker = shoonyasdk.HTTP(bruser,pwd,vendorcode,apikey,imei,token)
-                    fund,excp= self.broker.checkfunds()
-                    if fund:
+                        self.broker = shoonyasdk.HTTP(bruser,pwd,vendorcode,apikey,imei,token)
+                        fund,excp= self.broker.checkfunds()
+                        if fund:
 
-                        br.funds=fund
-                        br.valid=True
+                            br.funds=fund
+                            br.valid=True
 
-                        br.save()
-                    else: 
-                        br.funds="Unable to Fetch"
-                        br.valid=False
+                            br.save()
+                        else: 
+                            br.funds="Unable to Fetch"
+                            # br.valid=False
 
-                        br.save()
-                        logpathfron.error(f'connect to administration with following error:-{excp}')
-                        
-                        
-                        
+                            br.save()
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+                            
+                            
+                            
 
-                elif br.brokername.lower()=='angel':
-                    bruser= br.accountnumber
-                    pwd= br.password
-                    apikey= br.apikey
-                    token= br.AuthToken
-                    print('eh')
-                    self.broker = Angelsdk.HTTP(bruser,pwd,apikey,token)
-                    fund,excp=self.broker.checkfunds()
-                    print(fund)
+                    elif br.brokername.lower()=='angel':
+                        bruser= br.accountnumber
+                        pwd= br.password
+                        apikey= br.apikey
+                        token= br.AuthToken
+                        print('eh')
+                        self.broker = Angelsdk.HTTP(bruser,pwd,apikey,token)
+                        fund,excp=self.broker.checkfunds()
+                        print(fund)
 
-                    if fund:
-                        br.funds=fund['net']
-                        br.valid= True
-                        br.save()
-                    else: 
-                        br.funds="Unable to Fetch"
-                        br.valid= False
+                        if fund:
+                            br.funds=fund['net']
+                            br.valid= True
+                            br.save()
+                        else: 
+                            br.funds="Unable to Fetch"
+                            # br.valid= False
 
-                        br.save()
-                        logpathfron.error(f'connect to administration with following error:-{excp}')
+                            br.save()
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
 
-                        
-                        
+                    elif br.brokername.lower()=='fyers':
+                        bruser= br.accountnumber
+                        pwd= br.password
+                        apikey= br.apikey
+                        token= br.AuthToken
+                        print('eh')
+                        self.broker = fyerssdk.HTTP(bruser,br.secretkey,token)
+                        fund,excp=self.broker.checkfunds()
+                        print(fund)
+
+                        if fund:
+                            br.funds=fund[0]['equityAmount']
+                            br.valid= True
+                            br.save()
+                        else: 
+                            br.funds="Unable to Fetch"
+                            # br.valid= False
+
+                            br.save()
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+                    elif br.brokername.lower()=='motilal':
+                        bruser= br.accountnumber
+                        pwd= br.password
+                        apikey= br.apikey
+                        token= br.AuthToken
+                        self.broker = motilalsdk.HTTP(bruser,pwd,apikey,token)
+                        fund,excp=self.broker.checkfunds()
+                        print(fund)
+
+                        if fund:
+                            br.funds=fund[0]['amount']
+                            br.valid= True
+                            br.save()
+                        else: 
+                            br.funds="Unable to Fetch"
+                            # br.valid= False
+
+                            br.save()
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+                    
+                    elif br.brokername.lower()=='groww':
+
+                        token= br.AuthToken
+                        self.broker = growwsdk.HTTP(token)
+                        fund,excp=self.broker.checkfunds()
+                        print(fund)
+
+                        if fund:
+                            br.funds=fund['net']
+                            br.valid= True
+                            br.save()
+                        else: 
+                            br.funds="Unable to Fetch"
+                            br.valid= False
+
+                            br.save()
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+
+
+
+
+
+
         def getposition(self):
             accountlist= md.Broker.objects.filter(user=1,valid=True)
             print(accountlist)
@@ -202,7 +313,78 @@ class utility:
                     else: 
                         logpathfron.error(f'connect to administration with following error:-{excp}')
 
+                elif br.brokername.lower()=='fyers':
+                        bruser= br.accountnumber
+                        pwd= br.password
+                        apikey= br.apikey
+                        token= br.AuthToken
+                        print('eh')
+                        self.broker = fyerssdk.HTTP(bruser,br.secretkey,token)
+                        fund,excp=self.broker.getposition()
+                        print(fund)
+
+                        if fund:
+
+                            for data in fund:
+                                md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
+                                data['accountnumber']=br.accountnumber
+                                data['user']=1
+                                data['broker']='FYERS'
+                                data['nickname']=br.nickname
+                                
+                                serialize = ser.Allpositions(data=data)
+                                if serialize.is_valid(raise_exception=True):
+                                    serialize.save()
                         
+                        else: 
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+                elif br.brokername.lower()=='motilal':
+                        bruser= br.accountnumber
+                        pwd= br.password
+                        apikey= br.apikey
+                        token= br.AuthToken
+                        self.broker = motilalsdk.HTTP(bruser,pwd,apikey,token)
+                        fund,excp=self.broker.getposition()
+
+                        if fund:
+
+                            for data in fund:
+                                md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
+                                data['accountnumber']=br.accountnumber
+                                data['user']=1
+                                data['broker']='MOTILAL'
+                                data['nickname']=br.nickname
+                                
+                                serialize = ser.Allpositions(data=data)
+                                if serialize.is_valid(raise_exception=True):
+                                    serialize.save()
+                        
+                        else: 
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+                    
+                elif br.brokername.lower()=='groww':
+
+                        token= br.AuthToken
+                        self.broker = growwsdk.HTTP(token)
+                        fund,excp=self.broker.getposition()
+                        print(fund)
+
+                        if fund:
+
+                            for data in fund:
+                                md.Allpositions.objects.filter(accountnumber=br.brokerid).delete()
+                                data['accountnumber']=br.brokerid
+                                data['user']=1
+                                data['broker']='GROWW'
+                                data['nickname']=br.nickname
+                                
+                                serialize = ser.Allpositions(data=data)
+                                if serialize.is_valid(raise_exception=True):
+                                    serialize.save()
+                        
+                        else: 
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+
                         
 
 
@@ -279,7 +461,94 @@ class utility:
                     else: 
                         logpathfron.error(f'connect to administration with following error:-{excp}')
 
-                        
+                elif br.brokername.lower()=='fyers':
+                    bruser= br.accountnumber
+                    pwd= br.password
+                    apikey= br.apikey
+                    token= br.AuthToken
+                    print('eh')
+                    self.broker = fyerssdk.HTTP(bruser,br.secretkey,token)
+                    fund,excp=self.broker.allholding()
+                    print(fund)
+                    if fund:
+                        md.allholding.objects.filter(accountnumber=br.accountnumber).delete()
+                        for data in fund:
+
+                            data['user']= 1
+                            data['broker']= br.brokername
+                            data['accountnumber']=br.accountnumber
+                            data['nickname']= br.nickname
+
+
+
+                            serialize = ser.allholding(data=data)
+                            if serialize.is_valid(raise_exception=True):
+                                serialize.save()
+
+                       
+                    else: 
+                        logpathfron.error(f'connect to administration with following error:-{excp}')
+
+
+                elif br.brokername.lower()=='motilal':
+                    bruser= br.accountnumber
+                    pwd= br.password
+                    apikey= br.apikey
+                    token= br.AuthToken
+                    self.broker = motilalsdk.HTTP(bruser,pwd,apikey,token)
+                    fund,excp=self.broker.allholding()
+
+                    if fund:
+                        md.allholding.objects.filter(accountnumber=br.accountnumber).delete()
+                        for data in fund:
+
+                            data['user']= 1
+                            data['broker']= br.brokername
+                            data['accountnumber']=br.accountnumber
+                            data['nickname']= br.nickname
+
+
+                            data['totalprofitandloss']=fund['totalholding']['totalprofitandloss']
+                            data['totalpnlpercentage']=fund['totalholding']['totalpnlpercentage']
+
+                            serialize = ser.allholding(data=data)
+                            if serialize.is_valid(raise_exception=True):
+                                serialize.save()
+
+                       
+                    else: 
+                        logpathfron.error(f'connect to administration with following error:-{excp}')
+
+                    
+                elif br.brokername.lower()=='groww':
+
+                    token= br.AuthToken
+                    self.broker = growwsdk.HTTP(token)
+                    fund,excp=self.broker.allholding()
+                    print(fund)
+
+                    if fund:
+                        md.allholding.objects.filter(accountnumber=br.brokerid).delete()
+                        for data in fund:
+
+                            data['user']= 1
+                            data['broker']= br.brokername
+                            data['accountnumber']=br.brokerid
+                            data['nickname']= br.nickname
+
+
+                            data['totalprofitandloss']=fund['totalholding']['totalprofitandloss']
+                            data['totalpnlpercentage']=fund['totalholding']['totalpnlpercentage']
+
+                            serialize = ser.allholding(data=data)
+                            if serialize.is_valid(raise_exception=True):
+                                serialize.save()
+
+                       
+                    else: 
+                        logpathfron.error(f'connect to administration with following error:-{excp}')
+
+
                         
 
         
@@ -478,6 +747,7 @@ class utility:
                 
                 orderid=  []
                 placeorders=False
+                order_ids= None
                 quantity=orderparams['quantity']
 
                 
@@ -501,6 +771,8 @@ class utility:
                             apikey= br.apikey
                             imei= br.imei
                             token= br.AuthToken
+                            secretkey= br.secretkey
+
                             if br.brokername=='SHOONYA':
                                 self.broker = shoonyasdk.HTTP(token=token,
                                                     user=bruser, 
@@ -520,6 +792,30 @@ class utility:
                                                     pwd=pwd, 
                                                     api_key=apikey, )
                                 order_ids=Angel.placeorder(orderparams,self.orderobject,False,False)
+                            if br.brokername=='FYERS':
+                                orderparams['broker']=br.brokername
+                                orderparams['nickname']=br.nickname
+
+                                
+                                FYERS = fyerssdk.HTTP(bruser,secretkey,token)
+                                order_ids=FYERS.placeorder(orderparams,self.orderobject)
+                            if br.brokername=='MOTILAL':
+                                orderparams['broker']=br.brokername
+                                orderparams['nickname']=br.nickname
+
+                                
+                                FYERS = motilalsdk.HTTP(bruser,pwd,apikey,token)
+                                order_ids=FYERS.placeorder(orderparams,self.orderobject)
+
+
+                            if br.brokername=='GROWW':
+                                orderparams['broker']=br.brokername
+                                orderparams['nickname']=br.nickname
+
+                                
+                                FYERS = motilalsdk.HTTP(bruser,pwd,apikey,token)
+                                order_ids=FYERS.placeorder(orderparams,self.orderobject)
+
 
                         else:
                             
@@ -672,6 +968,20 @@ class utility:
             webobj= dhansdk.WebSocketConnect(accountno,autoken)
             asyncio.run(webobj.start_thread())
         
+        def fyerswebsocket(self):
+           
+                
+            broker= md.Broker.objects.filter(brokername='FYERS',valid=True).last()
+            autoken= broker.imei
+            accountno= broker.accountnumber
+            secretkey= broker.secretkey
+            if autoken:
+                webobj= fyerssdk.WebSocketConnect(accountno,secretkey,autoken)
+                webobj.start_thread()
+            else:
+                logpathfron.error('no  access token found to get watchlist data kindly login at least 1 fyers account')
+
+
 
 
 
@@ -695,7 +1005,7 @@ class utility:
 
                  
                  
-obj=utility(1)
+# obj=utility(1)
 # obj.checkfunds()
 # obj.orderstatus()
 

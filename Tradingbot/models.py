@@ -51,16 +51,17 @@ class Broker(models.Model):
     brokername= models.CharField(null=True,blank=True,default=None,max_length=100,choices=brokerlist)
     accountnumber= models.CharField(null=True,blank=True,default=None,max_length=100)
     active=models.BooleanField(blank=True,null=True,default=False)
-    apikey=models.CharField(null=True,blank=True,default=None,max_length=100)
+    apikey=models.CharField(null=True,blank=True,default=None,max_length=1000)
     secretkey= models.CharField(null=True,blank=True,default=None,max_length=100)
-    password= models.CharField(null=True,blank=True,default=None,max_length=100)
+    password= models.CharField(null=True,blank=True,default=None,max_length=1000)
     vendorcode= models.CharField(null=True,blank=True,default=None,max_length=100)
-    imei= models.CharField(null=True,blank=True,default=None,max_length=100)
-    AuthToken= models.CharField(null=True,blank=True,default=None,max_length=100)
+    imei= models.CharField(null=True,blank=True,default=None,max_length=1000)
+    AuthToken= models.CharField(null=True,blank=True,default=None,max_length=1000)
     valid=models.BooleanField(blank=True,null=True,default=False)
     websocket= models.BooleanField(blank=True,null=True,default=False)
     nickname= models.CharField(null=True,blank=True,default=None,max_length=100)
     funds= models.CharField(null=True,blank=True,default=None,max_length=100)
+    url = models.CharField(null=True,blank=True,default=None,max_length=1000)
 
 
     

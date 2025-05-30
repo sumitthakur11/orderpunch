@@ -353,6 +353,7 @@ class HTTP(growwsetup):
     def checkfunds (self):
         try:
             cash = self.groww.get_available_margin_details ()
+            print(cash)
 
             return cash['clear_cash'],None
             

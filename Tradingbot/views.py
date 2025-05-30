@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_protect
 from . import serializers as ser 
 from . import models as md
 import datetime
-from .Brokers import shoonyasdk,Angelsdk,motilalsdk,growwsdk,dhansdk,flattradesdk,stoxkartsdk
+from .Brokers import shoonyasdk,Angelsdk,motilalsdk,growwsdk,dhansdk,flattradesdk,stoxkartsdk,fyerssdk
 from .utility import utility
 from . import env
 import os
@@ -23,11 +23,25 @@ logpath= os.path.join(path,'Botlogs/Frontendlog.logs')
 logpath= os.path.normpath(logpath)
 import json
 import pytz
+import time
+from django.middleware import csrf
+from django.http import JsonResponse
 
 print(logpath,'logpath')
 logger=env.setup_logger(logpath)
 
 # Create your views here.
+def get_csrf_token(request):
+    csrf_token = csrf.get_token(request)
+    return JsonResponse({'csrfToken': csrf_token})
+
+
+
+
+
+
+
+
 class LoginAPI(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
 
@@ -143,6 +157,10 @@ class broker(GenericAPIView):
             if not put :
                 proj= md.Broker.objects.filter(brokerid=request.data.get('brokerid')).last()
                 proj.active= False if proj.active else True
+                print(proj.brokername)
+                if proj.brokername=='GROWW':    
+                    proj.valid=True
+
                 proj.save()
 
             else :
@@ -262,6 +280,8 @@ class Getsymbols(GenericAPIView):
                 if request.GET.get('Broker').lower()=="stoxkart":
                     datas= stoxkartsdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
 
+                if request.GET.get('Broker').lower()=="fyers":
+                    datas= fyerssdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
 
                 
 
@@ -336,6 +356,8 @@ class placeorder (GenericAPIView):
             data['transactiontype'] = request.data.get('side')
             data['account'] = request.data.get('accountname')
             data['discloseqty'] = request.data.get('discloseqty')
+            data['lotsize'] = request.data.get('lotsize')
+
 
 
             
@@ -398,6 +420,71 @@ class loginbroker (GenericAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+class loginbrokerredirect (GenericAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    def get(self, request, *args, **kwargs):
+
+
+        try:
+            user = request.user
+
+            data= dict()
+            data['brokerid'] = request.GET.get("brokerid")
+            dash=utility(user)
+            oid=dash.loginbroker(data)
+            time.sleep(2)
+            db = md.Broker.objects.filter(brokerid=data['brokerid']).last()
+            print(db.url,'urlssssssssssssssssssssssssssssssssssssssssssssss')
+           
+
+
+
+            return Response({"message":db.url},status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            return Response({
+                    "message": [],
+                    "code": status.HTTP_400_BAD_REQUEST
+                },  
+                status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+    def post(self, request):
+        user = request.user
+        data=dict()
+        try:
+
+       
+        
+            data['brokerid'] = request.data.get("brokerid")
+            print(request.data)
+            db = md.Broker.objects.filter(brokerid=int(data['brokerid'])).last()
+            db.AuthToken=  request.data.get("accesstoken")
+            db.save()
+
+
+          
+           
+           
+
+            
+            return Response({"message":'ok' },status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(e)
+            return Response({
+                    "Message": str(e),
+                    "code": status.HTTP_400_BAD_REQUEST
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+
 
 class logoutbroker (GenericAPIView):
     def post(self, request):
@@ -576,7 +663,16 @@ class loadaccount(GenericAPIView):
             elif request.GET.get('broker').lower()=='angel':
                 datas= md.Broker.objects.filter(user=users.id,brokername='ANGEL').values('brokerid','accountnumber','brokername','active','apikey','password','secretkey','AuthToken')
             
+            elif request.GET.get('broker').lower()=='fyers':
+                datas= md.Broker.objects.filter(user=users.id,brokername='FYERS').values('brokerid','accountnumber','secretkey','AuthToken','active')
+            
 
+            elif request.GET.get('broker').lower()=='motilal':
+                datas= md.Broker.objects.filter(user=users.id,brokername='MOTILAL').values('brokerid','accountnumber','password','AuthToken','apikey','active')
+
+            elif request.GET.get('broker').lower()=='groww':
+                datas= md.Broker.objects.filter(user=users.id,brokername='GROWW').values('brokerid','AuthToken','active')
+            
                 # datas = datas.to_dict(orient="records")
 
             return Response({"message":datas})

@@ -20,19 +20,24 @@ from Tradingbot import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login',views.LoginAPI.as_view(),name='login'),
-    path('broker', views.broker.as_view(), name="broker"),
-    path('placeorder', views.placeorder.as_view(), name="placeholder"),
-    path('symbols', views.Getsymbols.as_view(), name="symbol"),
-    path('loginbroker', views.loginbroker.as_view(), name="loginbroker"),
-    path('logoutbroker', views.logoutbroker.as_view(), name="logoutbroker"),
-    path('position', views.postionsobj.as_view(), name="logoutbroker"),
-    path('watchlist', views.watchlist.as_view(), name="logoutbroker"),
-    path('loadaccount', views.loadaccount.as_view(), name="logoutbroker"),
-    path('sendlog', views.sendlog.as_view(), name="sendlog"),
-    path('getfunds', views.getfunds.as_view(), name="getfunds"),
-    path('getposition', views.getposition.as_view(), name="getposition"),
-    path('getholding', views.getholding.as_view(), name="getholding"),
+    path('api/csrf_token',views.get_csrf_token,name= "token"),
+
+    path('api/login',views.LoginAPI.as_view(),name='login'),
+    path('api/broker', views.broker.as_view(), name="broker"),
+    path('api/placeorder', views.placeorder.as_view(), name="placeholder"),
+    path('api/symbols', views.Getsymbols.as_view(), name="symbol"),
+    path('api/loginbroker', views.loginbroker.as_view(), name="loginbroker"),
+    path('api/loginredirect', views.loginbrokerredirect.as_view(), name="loginbroker"),
+
+    
+    path('api/logoutbroker', views.logoutbroker.as_view(), name="logoutbroker"),
+    path('api/position', views.postionsobj.as_view(), name="logoutbroker"),
+    path('api/watchlist', views.watchlist.as_view(), name="logoutbroker"),
+    path('api/loadaccount', views.loadaccount.as_view(), name="logoutbroker"),
+    path('api/sendlog', views.sendlog.as_view(), name="sendlog"),
+    path('api/getfunds', views.getfunds.as_view(), name="getfunds"),
+    path('api/getposition', views.getposition.as_view(), name="getposition"),
+    path('api/getholding', views.getholding.as_view(), name="getholding"),
 
 
 

@@ -26,7 +26,7 @@ import os
 from pathlib import Path
 import pathlib
 import platform
-from .MotilalPythonSDK import MOFSLOPENAPI
+from .PythonSDK import MOFSLOPENAPI
 path = pathlib.Path(__file__).resolve().parent.parent.parent
 # import ThreadPoolExecutor
 log = logging.getLogger(__name__)
@@ -152,47 +152,52 @@ class Ltp:
 
 
 
-    
-class motilalsetup(object):
-    def __init__(self, user=1, pwd='', vendorcode= '',clientcode ='',apikey='',token=''):
 
-        self.user = user  
+class motilalsetup(object):
+    def __init__(self,clientcode ='', pwd='',apikey='',token=''):
+
+        self.user = clientcode  
         self.pwd =pwd
         self.clientcode = clientcode
-        self.vendorcode= vendorcode
+        self.vendorcode= clientcode
         self.apikey= apikey
+        self.token= token
         self.baseurl = 'https://openapi.motilaloswal.com/'
         self.Mofsl = MOFSLOPENAPI.MOFSLOPENAPI(self.apikey, self.baseurl, self.clientcode, 'Desktop', 'Chrome', '104')
+        combined = pwd + apikey
+        hashed_password = hashlib.sha256(combined.encode()).hexdigest()
+        self.password = hashed_password
+
+
         self.headers=self.header()
+        
 
     def header(self):
 
-        Authorization= self.gettoken()
-        
-
+     
         headers = {
                 "Accept": "application/json",
                 "User-Agent": "MOSL/V.1.1.0",
-                "Authorization": Authorization['AuthToken'],
+                # "Authorization": Authorization['AuthToken'],
                 "ApiKey": self.apikey,
                 "ClientLocalIp": "1.2.3.4",
                 "ClientPublicIp": "1.2.3.4",
                 "MacAddress": "00:00:00:00:00:00",
                 "SourceId": "WEB",
                 "vendorinfo": self.vendorcode,
-                "osname": os.name,
-                "osversion": platform.version(),
+                "osname": str(os.name),
+                "osversion": '10.0.19041',
                 "devicemodel": "AHV",
                 "manufacturer": "unknown",
                 "productname": "Investor",
                 "productversion": "1",
-                "installedappid": uuid.uuid1(),
+                "installedappid": str(uuid.uuid1()),
                 "imeino": "abc123",
                 "browsername": "Chrome",
                 "browserversion": "105"
         }        
 
-        return header
+        return headers
 
     def gettoken(self):
         try:
@@ -210,48 +215,54 @@ class motilalsetup(object):
         # api = ShoonyaApiPy()
         
 
-    
     def login(self):
         try:
-            self.otp = pyotp.TOTP(token).now()
 
-            self.Mofsl.login(self.userid, self.pwd, '', self.otp, self.vendorinfo)
+            otp = pyotp.TOTP(self.token).now()
 
-            res = api.login(userid=self.user, password=self.pwd,vendor_code= self.vendorcode,api_secret=self.app_key,imei=self.imei, twoFA=self.otp)
-            token={}
-            if res['status']=='SUCCESS':
-                token= {"Token":res['AuthToken']}
-                logpathfron.info('Login sucessful')
-
-                
-            # token= json.dumps(token)
-            print(token)
+            payload= {
+                    "userid":self.user,
+                    "password" :self.password,
+                    "2FA":"18/10/2018",
+                    "totp": otp
+                        }
+            login=requests.post('https://openapi.motilaloswal.com/rest/login/v3/authdirectapi',json=payload,headers=self.headers)
             
-            logpath= os.path.join(BASE_DIR,'motilallogin')
-            logpath= os.path.normpath(logpath)
+            print(login.json())
+            if login.status_code==200:
+
+                login=login.json()
+                if login['status']=='SUCCESS':
+                    token= {"Token":login['AuthToken']}
+                    logpathfron.info('Login sucessful')
+
+                        
+                    # token= json.dumps(token)
+                    print(token)
+                    
+                    logpath= os.path.join(BASE_DIR,'motilallogin')
+                    logpath= os.path.normpath(logpath)
 
 
 
-            if not os.path.exists(logpath):
-                os.makedirs(logpath)
-                print(f"Folder created at: {logpath}")
-            else:
-                print(f"Folder already exists at: {logpath}")
-            logpath= os.path.join(logpath,f"{self.user}.json")
-            logpath= os.path.normpath(logpath)
+                    if not os.path.exists(logpath):
+                        os.makedirs(logpath)
+                        print(f"Folder created at: {logpath}")
+                    else:
+                        print(f"Folder already exists at: {logpath}")
+                    logpath= os.path.join(logpath,f"{self.user}.json")
+                    logpath= os.path.normpath(logpath)
 
-            finalout=open(logpath, 'w')
-            json.dump(token, finalout)
-            finalout.close()
-            if res['stat']=='Ok':
-                logpathfron.info('Motilal Login sucessful')
-
-
-            return True,None
+                    finalout=open(logpath, 'w')
+                    json.dump(token, finalout)
+                    finalout.close()
+                
+                return True,None
         except Exception as e:
             logpathfron.error(e)
             return False,e
 
+   
 
 
 
@@ -278,15 +289,18 @@ class motilalsetup(object):
 
     
 class HTTP(motilalsetup):
-    # def __init__(self,user='FA383345', pwd=pwd, vendorcode= 'FA383345_U',app_key=apikey, imei=imei,token=token):
-    #         super().__init__(self)
-    #         self.user=user
-    #         self.api=self.get_shoonya_client()
+    # def __init__(self,clientcode ='', pwd='',apikey='',token=''):
+    #     super().__init__(clientcode, pwd,apikey,token)
+    
+  
+    
+    
     
     
 
     
     def cancel_order(self, orderid):
+        
         orderparams = {"uniqueorderid": orderid}
         ret= requests.post(self.baseurl+"rest/trans/v1/cancelorder",data=orderparams,header=self.headers)
         return ret.json()
@@ -323,9 +337,11 @@ class HTTP(motilalsetup):
     
   
     
-    def placeorder(self,orderparam,orderobject,STOPLOSS,PAPER):
+    def placeorder(self,orderparam,orderobject):
         try:
-        
+            print(orderparam)
+            Authorization= self.gettoken()
+            self.headers['Authorization'] = Authorization['Token']
         
             exchange_segment= orderparam['exchange']
             buy_or_sell=orderparam['transactiontype']
@@ -354,44 +370,44 @@ class HTTP(motilalsetup):
 
             
 
-            if not PAPER:
-                param= dict()
-                param['exchange']=exchange_segment
-                param['symboltoken']= orderparam['symboltoken']
-                param['buyorsell']=buy_or_sell
-                param['ordertype']=price_type
-                param['producttype']=product_type
-                param['orderduration']='DAY'
-                param['price']=orderparam['ltp']
-                param['triggerprice']=trigger_price
-                param['quantityinlot']=orderparam['quantity']/orderparam['lotsize']
-                param['disclosedquantity']=discloseqty
-                param['amoorder']="N"
-                param['algoid']=''
+            
+            param= dict()
+            param['exchange']=exchange_segment
+            param['symboltoken']= int(orderparam['symboltoken'])
+            param['buyorsell']=buy_or_sell
+            param['ordertype']=price_type
+            param['producttype']=product_type
+            param['orderduration']='DAY'
+            param['price']=int(orderparam['ltp'])
+            param['triggerprice']=int(trigger_price)
+            param['quantityinlot']=int(int(orderparam['quantity'])/int(orderparam['lotsize']))
+            param['disclosedquantity']=discloseqty
+            param['amoorder']="N"
 
-                # param= json.dumps(param)
-                
-                ret= requests.post(self.baseurl+"rest/trans/v1/placeorder",data=param,header=self.headers)
-                ret= ret.json()
-                if ret['status']=='SUCCESS':
-                    ret=ret.json()
-                    status=self.orderBook()
-                    status = pd.DataFrame(status['data'])
-                    status=status [status['uniqueorderid']==ret['uniqueorderid']]
-                    orderparam['orderid']=ret['uniqueorderid']
-                    orderparam['orderstatus']= status['orderstatus'].iloc[-1].upper()
-                    orderparam['status']=True if status['orderstatus'].upper()=='COMPLETE' else False
-                    orderparam['user']=1
-                    orderparam['broker']='MOTILAL'
-                    orderparam['avg_price']=status['averageprice'].iloc[-1].upper()
-  
-                    orderobject(orderparam)
-                    logpathfron.info(f'Broker Shoonya order placed, orderid :{ret['uniqueorderid']}')
+            # param= json.dumps(param)
+            print(param)
+            ret= requests.post(self.baseurl+"rest/trans/v1/placeorder",json=param,headers=self.headers)
+            ret= ret.json()
+            print(ret)
+            if ret['status']=='SUCCESS':
+                ret=ret.json()
+                status=self.orderBook()
+                status = pd.DataFrame(status['data'])
+                status=status [status['uniqueorderid']==ret['uniqueorderid']]
+                orderparam['orderid']=ret['uniqueorderid']
+                orderparam['orderstatus']= status['orderstatus'].iloc[-1].upper()
+                orderparam['status']=True if status['orderstatus'].upper()=='COMPLETE' else False
+                orderparam['user']=1
+                orderparam['broker']='MOTILAL'
+                orderparam['avg_price']=status['averageprice'].iloc[-1].upper()
 
-                    return data
-                
-                else:
-                    return None
+                orderobject(orderparam)
+                logpathfron.info(f'Broker Shoonya order placed, orderid :{ret['uniqueorderid']}')
+
+                return data
+            
+            else:
+                return None
         except Exception as e:
             logpathfron.error(e)
 
@@ -419,31 +435,40 @@ class HTTP(motilalsetup):
         try:
         
       
-         
+            Authorization= self.gettoken()
+            self.headers['Authorization'] = Authorization['Token']
+
             findata= dict()
             listfin=[]
-            ret= requests.post(self.baseurl+"rest/book/v1/getposition",data=data,header= self.headers)
+            ret= requests.post(self.baseurl+"rest/book/v1/getposition",headers= self.headers)
             position =ret.json()
+            print(position)
            
             if ret.status_code==200:
                 position =ret.json()
                 if position['status']=='SUCCESS':
-                    positionall= position['data']
-                    for i in positionall:
+                    if position['data'] is not None:
 
-                            
-                        findata['exchange'] = i['exchange']
-                        findata['tradingsymbol'] = i['symbol']
-                        findata['symboltoken'] = i['symboltoken']
-                        findata['buyavgprice'] = i['buyquantity']/i['buyamount']
-                        findata['sellavgprice'] =  i['sellquantity']/i['sellamount']
-                        findata['netqty'] = i['buyquantity']-i['sellquantity']
-                        findata['ltp'] = i['LTP']
-                        findata['unrealised'] = i['marktomarket']
-                        findata['realised'] = i['bookedprofitloss']
-                        listfin.append(finaldata)
-                
-                    return listfin ,None
+                        positionall= position['data']
+                        for i in positionall:
+
+                                
+                            findata['exchange'] = i['exchange']
+                            findata['tradingsymbol'] = i['symbol']
+                            findata['symboltoken'] = i['symboltoken']
+                            findata['buyavgprice'] = i['buyquantity']/i['buyamount']
+                            findata['sellavgprice'] =  i['sellquantity']/i['sellamount']
+                            findata['netqty'] = i['buyquantity']-i['sellquantity']
+                            findata['ltp'] = i['LTP']
+                            findata['unrealised'] = i['marktomarket']
+                            findata['realised'] = i['bookedprofitloss']
+                            listfin.append(findata)
+                            findata={}
+
+                    
+                        return listfin ,None
+                    else:
+                        return None,'Not found'
                 else:
                     return None,'Not found'
 
@@ -455,8 +480,10 @@ class HTTP(motilalsetup):
     
     def allholding (self):
         try:
-            
-            ret= requests.post(self.baseurl+"rest/report/v1/getdpholding",data=data,header= self.headers)
+            Authorization= self.gettoken()
+            self.headers['Authorization'] = Authorization['Token']
+
+            ret= requests.post(self.baseurl+"rest/report/v1/getdpholding",headers= self.headers)
             findata= dict()
             listfin=[]
             if ret.status_code==200:
@@ -465,18 +492,23 @@ class HTTP(motilalsetup):
                 print(position)
                 if position['status']=='SUCCESS':
                     positionall= position['data']
+                    if positionall is not None:
+                        for i in positionall:
+                                
+                            findata['tradingsymbol'] = i['scripname']
+                            findata['symboltoken'] = i['nsesymboltoken']
+                            findata['quantity'] = i['dpquantity']
+                            findata['averageprice'] = i['buyavgprice']
 
-                    for i in positionall:
-                            
-                        findata['tradingsymbol'] = i['scripname']
-                        findata['symboltoken'] = i['nsesymboltoken']
-                        findata['quantity'] = i['dpquantity']
-                        findata['averageprice'] = i['buyavgprice']
 
+                            listfin.append(findata)
+                            findata={}
 
-                        listfin.append(finaldata)
-                
-                    return listfin ,None
+                    
+                        return listfin ,None
+                    else:
+                        return None,'Not found'
+
                 else:
                     return None,'Not found'
 
@@ -489,12 +521,15 @@ class HTTP(motilalsetup):
 
     def checkfunds (self):
         try:
+            Authorization= self.gettoken()
+            self.headers['Authorization'] = Authorization['Token']
+
        
-            ret= requests.post(self.baseurl+"rest/report/v1/getreportmarginsummary",data=data)
+            ret= requests.post(self.baseurl+"rest/report/v1/getreportmarginsummary",headers=self.headers)
             if ret.status_code==200:
                 cash =ret.json()
-                cash = cash[0]['amount']
-                return cash ,None
+                
+                return cash['data'] ,None
             
           
 

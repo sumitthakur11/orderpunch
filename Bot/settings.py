@@ -26,9 +26,9 @@ SECRET_KEY = 'django-insecure-ficpwqoz#9ys+_)(((0)(qw4^621(lb584=c+3wybr2zi+ev48
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1',"3.111.155.182",'3.7.105.243','192.168.1.5']
+ALLOWED_HOSTS = ['localhost','127.0.0.1',"3.111.155.182",'3.7.217.151','192.168.1.5','tradeforsure.in']
 CORS_ALLOWED_ORIGINS = [
-"http://127.0.0.1:5173","http://localhost:5173/,"
+"http://127.0.0.1:5173","http://localhost:5173","http://tradeforsure.in"
 ]
 CORS_ALLOW_PREFLIGHT = True
 CORS_ALLOW_ALL_ORIGINS = True
