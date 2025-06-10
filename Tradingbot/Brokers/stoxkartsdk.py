@@ -100,70 +100,6 @@ def searchscrip (name,exchange='NFO',instrument=''):
 
 
 
-savepath= os.path.join(BASE_DIR,"shoonya.json")
-savepath= os.path.normpath(savepath)
-submitdata=[]
-tokenltp=0
-class Ltp:
-    def __init__(self,data) :
-        
-        try:
-            global findata
-            global tokenltp
-            findata= dict()
-
-            if data['t']=='tk' and data['tk']!=tokenltp:    
-                print('check acknowl',data)
-
-                findata['LTP'] =data['lp']
-                findata['exchange']= data['e']
-                findata['broker']='SHOONYA'
-                findata['token']= data['tk']
-                findata['Tradingsymbol']= data['ts']
-                findata['Lotsize']= data['ls']
-                findata['volume']= data['v'] if 'v' in data.keys() else 0
-                tokenltp= data['tk']
-
-                submitdata.append(findata)
-                print(submitdata)
-                file= open(savepath,'w')
-                datasub = json.dump(submitdata,file)
-                file.close()
-            
-
-
-            if data['t']=='tf':
-
-                if 'lp' in  data.keys():
-                    with open(savepath,'r+') as incomingfile:
-                        data1 = json.load(incomingfile)
-                        print(data1,'incomingfile')
-                        incomingfile.seek(0)
-                        for i in range(len(data1)):
-                            if data['tk']==data1[i]['token']:
-                                data1[i]['LTP'] =data['lp']
-                                data1[i]['exchange']= data['e']
-                                data1[i]['broker']='SHOONYA'
-                                data1[i]['token']= data['tk']
-                                data1[i]['volume']= data['v'] if 'v' in data.keys() else 0
-                        datasub = json.dump(data1,incomingfile, indent=4)
-                        incomingfile.truncate()
-                        incomingfile.close()
-                        
-                
-        
-            
-        except KeyError as e :
-            print(e)
-            pass
-
-
-
-
-
-
-
-
 
 
 
@@ -171,560 +107,529 @@ class Ltp:
 
 
     
-class shoonyasetup(object):
-    def __init__(self, user=1, pwd='', vendorcode= '',app_key='', imei='',token=''):
 
-        broker = md.Broker.objects.filter(brokername='SHOONYA').last()
-        self.user = user  
-        self.pwd = broker.password
-        self.app_key = broker.apikey
-        self.imei = 'abc1234'
-        self.vendorcode= broker.vendorcode
-        self.auth=None
-        token= broker.AuthToken
-        self.baseurl = 'https://api.shoonya.com/NorenWClientTP/'
-        self.otp = pyotp.TOTP(token).now()
+class StoxkartConnect(object):
+    def __init__(self, api_key='', api_secret='', userid='',password=''):
+        self.api = api_key
+        self.secret = api_secret
+        self.userid = userid
+        self.password= password
         
-    def gettoken(self):
-        try:
-            logpath= os.path.join(BASE_DIR,'shoonyalogin')
-            logpath= os.path.normpath(logpath)
-            logpath= os.path.join(logpath,f"{self.user}.json")
-            logpath= os.path.normpath(logpath)
-            print(logpath)
+      
+
+ 
 
 
-
-
-            with open(logpath,'rb')as file:
-                token= json.load(file)
-            return token
-        except Exception as e:
-            logpathfron.error('Try Login Again')
-            print(e)
-        # api = ShoonyaApiPy()
-        
-
-    
     def login(self):
-        try:
+        login_url = f"https://superrtrade.stoxkart.com/login?api_key={self.api}"
+        checktoken = md.Broker.objects.filter(user=1, accountnumber=self.userid, brokername='STOXKART').last()
+        checktoken.vendorcode = None
+        checktoken.url = login_url
+        checktoken.save()
+        pasttime = time.time()
 
-            res = api.login(userid=self.user, password=self.pwd,vendor_code= self.vendorcode,api_secret=self.app_key,imei=self.imei, twoFA=self.otp)
-            token={}
-            if res['stat']=='Ok':
-                token= {"Token":res['susertoken'],"uid":res['uid'],"actid":res['actid']}
-                logpathfron.info('Login sucessful')
+        while True:
+            self.login2()
+            current= time.time()
+            diff= current-pasttime
+            if int(diff)>=400:
+                return None
+        
+    def login2(self):
+
+        # while True:   
+
+                checktoken = md.Broker.objects.filter(user=1, accountnumber=self.userid, brokername='STOXKART').last()
+                if checktoken.vendorcode:
+                    url = "https://preprod-openapi.stoxkart.com/auth/token"
+                    headers = {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    
+                    }
+
+                    token= self.api+checktoken.vendorcode
+                    hashed_data = hashlib.sha256(token.encode()).hexdigest()
+        
+                    key1 = bytes(self.api + checktoken.vendorcode, 'UTF-8')
+                    key2 = bytes(self.secret, 'UTF-8')        
+
+              
+                    signature = hmac.new(key1, key2, hashlib.sha256).hexdigest()
+                    print(signature)
+
+                    data = {
+                        "api_key": self.api,
+                        "signature": signature,
+                        "req_token": checktoken.vendorcode,
+                        }
+
+
+                    response = requests.post(url, json=data, headers=headers)
+                    print(response.json())
+                    
+                    if response.status_code == 200  :
+                        response_data = response.json()
+
+                        if response_data.get("status") == "success":
+
+                            access_token = response_data["data"]["access_token"]
+                            checktoken.imei = access_token
+                            checktoken.valid = True
+                            checktoken.save()
+                            return response_data    
+                        else:
+                            response_data = response.text
+                            checktoken.valid = False
+                            checktoken.save()
+
+
+                            logging.error(f"Failed to generate access token: {response_data}")
+                            return None
+                    else:
+                        checktoken.valid = False
+                        checktoken.save()
+
+                        return None
 
                 
-            # token= json.dumps(token)
-            print(token)
+
+    def login3(self):
+        print(self.api)
+        data = {
+                "platform": "api",
+
+                "data": {
+                    "client_id": self.userid ,
+                    "password": self.password,
+                
+                }
+                }
+        print(data)
+        print(self.password)
+        
+
+        
+        checktoken = md.Broker.objects.filter(user=1, accountnumber=self.userid, brokername='STOXKART').last()
+        
+        url = f"https://preprod-openapi.stoxkart.com/auth/login?api-key={self.api}"
+        headers = {
+                    "Content-Type": "application/json",
+                    "Accept-Type": "application/json",
+                    # "X-Api-Key":self.api,
+                    "X-Platform":'api',
+                    # "X-Access-Token":checktoken.imei
+
+
+                    }
+        response = requests.post(url, json=data, headers=headers)
+        print(response.json())
+        if response.status_code==200 :
+            response=response.json()
+            if response['status'].lower()=='success':
+                checktoken.vendorcode= response['data']['token']
+                checktoken.save()
+                self.validate_2fa(response['data']['token'],checktoken)
+    
+
+    def validate_2fa(self, token,checktoken):
+        otp = pyotp.TOTP('ZP462I7OEGPXFQRN').now()
+        print(otp)
+        params = {
+            "platform": "api",
+            "data": {
+            "client_id":  self.userid,
+            "password": self.password,
+            "api-key":self.api,
+            "req_token": token,
+            "action": "api-key-validation",
+            "totp": otp
             
-            logpath= os.path.join(BASE_DIR,'shoonyalogin')
-            logpath= os.path.normpath(logpath)
+            }
+        }     
+        print(params)
+        url = f"https://preprod-openapi.stoxkart.com/auth/twofa/verify?api-key={self.api}"
+        headers = {
+                    "Content-Type": "application/json",
+                    "Accept-Type": "application/json",
+                    "X-Access-Token":checktoken.imei,
+                                "client_id":  self.userid,
+                                "password": self.password,
+                                "api-key":self.api,
+                                "req_token": token,
+                                'x-api-key':self.api,
+                                'x-api-secret':self.secret,
 
 
 
-            if not os.path.exists(logpath):
-                os.makedirs(logpath)
-                print(f"Folder created at: {logpath}")
+
+                    "X-Platform":'api',
+                    }
+        data = requests.post(url, json=params, headers=headers)
+        print(data.json())
+
+        if data.status_code==200 :
+            print(data)
+
+            data = data.json()
+            if data['status'].lower()=='success':
+                print(data)
+                requestToken = data["data"]["request_token"]
+                checktoken.imei=requestToken
+                checktoken.save()
+        
+        
+
+
+    def loginsession(self):
+            checktoken = md.Broker.objects.filter(user=1, accountnumber=self.userid, brokername='STOXKART').last()
+            headers = {
+                "X-Access-Token": f"Bearer {checktoken.imei}",
+                "Content-Type": "application/json",
+                "Accept-Type":"application/json",
+                "X-Platform":"api",
+                "X-Api-Key":self.api,
+                "request_token" : checktoken.vendorcode,
+                "x-session" : "{}:{}".format(checktoken.apikey, checktoken.imei),
+
+
+
+
+
+            }
+
+          
+
+            return headers 
+    
+
+
+
+
+
+    
+
+    
+    
+ 
+
+class HTTP(StoxkartConnect):
+    
+   
+    def checkfunds(self):
+        # print(self.key,self.secret,self.passphrase)
+        try:
+
+            """Get a list of accounts.
+
+            Required args:
+                None
+            """
+            """"api endpoint to fetch balance and account detail
+            *kwargs: symbol (not mandatory)
+            
+            """
+            url ='https://preprod-openapi.stoxkart.com/funds'
+            session =self.loginsession()
+            print(session)
+            balance= requests.get(url,headers= session)
+            balance= balance.json()
+            print(balance)
+            if balance['status']=='success' :
+                # return balance['data']['cash']['net'],None
+                return balance['data']['available_limit']
             else:
-                print(f"Folder already exists at: {logpath}")
-            logpath= os.path.join(logpath,f"{self.user}.json")
-            logpath= os.path.normpath(logpath)
+                return None, balance
 
-            finalout=open(logpath, 'w')
-            json.dump(token, finalout)
-            finalout.close()
-            if res['stat']=='Ok':
-                logpathfron.info('Shoonya Login sucessful')
+       
+        except Exception as e :
+            print(e)
+            return e
+    
+    
+    
+    
+    def cancel_order(self,variety,order_id):
+            url =f'https://preprod-openapi.stoxkart.com/{variety}/{order_id}'
+            data = {}
+            data ['']
+            session =self.loginsession()
+            print(session)
+            balance= requests.delete(url,headers= session)
+            balance= balance.json()
+            if balance['status']=='success':
+                return balance
+            else :
+                return balance
+    
+    
+    def allholding(self):
+        try:
+
+            url ='https://preprod-openapi.stoxkart.com/portfolio/holdings'
+            session =self.loginsession()
+            print(session)
+            balance= requests.get(url,headers= session)
+            balance= balance.json()
+            if balance['status']=='success':
+                
+                listfin = []
+                finddata ={}
+                for i in balance['data']:
+                    finddata['tradingsymbol'] = i['symbol']
+                    finddata['quantity'] = i['quantity']
+                    finddata['averageprice'] = i['average_price']
+                    finddata['ltp'] = i['last_trade_price']
+                    # finddata['profitandloss']=i['pnl']
+                    # finddata['totalprofitandloss']=i.get('total_pl')
+                    # finddata['totalpnlpercentage']=i.get('pnl_percentage')
+                    
+                    listfin.append(finddata)
+                    finddata={}
+                return listfin,None
+            else :
+                return None, balance.get('notfound')
 
 
-            return True,None
         except Exception as e:
-            logpathfron.error(e)
-            return False,e
+            print(e)
+            return None,e
 
-    def logout(self):
-        tokenkey=self.gettoken()
-        param= dict()
-        param['uid']= tokenkey['uid']
-        param['actid']=tokenkey['actid']
-        param= json.dumps(param)
-        data = "jData="+param+"&jKey="+tokenkey['Token']
-        ret= requests.post(self.baseurl+"Logout",data=data)
-
-
-
-
-  
+    def getposition(self):
+        try:
             
+            url ='https://preprod-openapi.stoxkart.com/portfolio/positions'
+            listfin= []
+            findata= {}          
+            
+            session =self.loginsession()
 
-    
-
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    
-class HTTP(shoonyasetup):
-    # def __init__(self,user='FA383345', pwd=pwd, vendorcode= 'FA383345_U',app_key=apikey, imei=imei,token=token):
-    #         super().__init__(self)
-    #         self.user=user
-    #         self.api=self.get_shoonya_client()
-    def wallet(self):
-    
-        """Get a list of accounts.
-
-        Required args:
-            None
-        """
-        """"api endpoint to fetch balance and account detail
-        *kwargs: symbol (not mandatory)
-        """
-        data= api.get_limits()
-        return data
-    
-
-    
-    def cancel_order(self, orderno):
-        data = api.cancel_order( orderno=orderno)
-        return data
-    
-    
-    def modifyorder(self,exchange, tradingsymbol, orderno, newprice,PAPER,orderobject):
-
-        data= None
-        
-        if not PAPER:
-            data = api.modify_order(exchange= exchange,
-                                        tradingsymbol=tradingsymbol,
-                                        orderno=orderno, newprice=newprice,newtrigger_price=newprice+1)
-        orderobject.sellorderstatus='MODIFIED'
-        orderobject.sellprice= float(newprice)
-        if PAPER:
-            # orderobject.status=False
-            pass
-        
-        orderobject.save()
-        return data
-    
+            balance = requests.get(url, headers=session)
+            balance = balance.json()
+            
+            if balance['status'] == 'success':
+                for i in balance['data']:
+                    # findata['tradingsymbol'] = i['tradingsymbol']
+                    findata['quantity'] = i['net_quantity']
+                    findata['averageprice'] = i['net_average_price']
+                    findata['ltp'] = i['last_trade_price']
+                    findata['profitandloss']=i['pnl']
+                    # findata['totalprofitandloss']==i.get('total_pl')
+                    # findata['totalpnlpercentage']=i.get('pnl_percentage')
+                    listfin.append(findata)
+                    findata={}
+                    print(listfin,'checklist')
+            
+                return listfin ,None
+            else:
+                        return None,'Not found'
 
 
-    def order_history(self,orderid):
+        except Exception as e:
+            print(e)
+            return None,e
+   
+    
+    
+
+    def orderbook(self,orderid):
         """
         Info :Get order status by order id  
         args: orderid 
         """
-        data = api.single_order_history(orderid=orderid)
-        return data
-    
-  
-    
-    def placeorder(self,orderparam,orderobject,STOPLOSS,PAPER):
-        try:
-
-        
-            exchange_segment= orderparam['exchange']
-            buy_or_sell=orderparam['transactiontype']
-            if orderparam['product_type'].upper()== "INTRADAY":
-                product_type="I"
-            elif orderparam['product_type'].upper() == "CARRYFORWARD":
-                product_type="M"
-            elif orderparam['product_type'].upper() == "DELIVERY":
-                product_type="C"
-
-            if orderparam['transactiontype'].upper()== "BUY":
-                buy_or_sell='B'
-            elif orderparam['transactiontype'].upper() == "SELL":
-                buy_or_sell='S'
-
-
-            
-            price_type= 'MKT' if orderparam['ordertype']=='MARKET' else "LMT"
-            price=orderparam['ltp']
-            tradingsymbol=orderparam['tradingsymbol']
-            discloseqty=int(float(orderparam['discloseqty']))
-            trigger_price='0'
-            retention='IOC'
-            remarks='NA'
-            amo='NO'
-            data= None
-            orderparam['avg_price']=orderparam['ltp']
-            orderparam['status']=True
-
-            
-
-            if not PAPER:
-                param= dict()
-                tokenkey=self.gettoken()
-                param['uid']= tokenkey['uid']
-                param['exch']=exchange_segment
-                param['actid']=tokenkey['actid']
-                param['tsym']=tradingsymbol
-                param['qty']=str(orderparam['quantity'])
-                param['prc']=str(orderparam['ltp'])
-                param['trgprc']=trigger_price
-                param['dscqty']=str(discloseqty)
-                param['prd']=product_type
-                param['trantype']=buy_or_sell
-                param['prctyp']=price_type
-                param['ret']=retention
-                param= json.dumps(param)
-                data = "jData="+param+"&jKey="+tokenkey['Token']
-                print(data)
-                ret= requests.post(self.baseurl+"PlaceOrder",data=data)
-                print(ret.text,ret.json().keys(),'keyssssssssssss>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-                if ret.status_code==200:
-                    ret=ret.json()
-                    status=self.order_history(str(ret['norenordno']),tokenkey)
-                    orderparam['orderid']=ret['norenordno']
-                    orderparam['orderstatus']= status['status'].upper()
-                    orderparam['status']=True if status['status'].upper()=='COMPLETE' else False
-                    orderparam['user']=1
-                    orderparam['broker']='SHOONYA'
-                    orderparam['avg_price']=status['prc']
-                    orderobject(orderparam)
-                    logpathfron.info(f'Broker Shoonya order placed, orderid :{ret['norenordno']}')
-
-                    return data
-                
-                else:
-                    return None
-        except Exception as e:
-            logpathfron.error(e)
-
-           
-
-            
-            # data = api.place_order(buy_or_sell,product_type,exchange_segment, tradingsymbol, orderparam['quantity'], discloseqty,price_type, price, trigger_price)
-            # status=self.order_history(str(data['norenordno']))
-            # status= status[0]
-            # orderparam['buyorderid']=data['norenordno']
-            # orderparam['orderstatus']= status['status'].upper()
-            # orderparam['status']=True if status['status'].upper()=='COMPLETE' else False
-
-
-
-
-
-      
-
-    def order_history(self,orderno,tokenkey):
-        param= dict()
-        param['norenordno']=orderno
-        param['uid']= tokenkey['uid']
-        param['actid']=tokenkey['actid']
-
-        
-        
-        param= json.dumps(param)
-        data = "jData="+param+"&jKey="+tokenkey['Token']
-        ret= requests.post(self.baseurl+"SingleOrdHist",data=data)
-        print(ret.text,ret.json(),'keyssssssssssss>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-        ret= ret.json()
-        ret=ret[0]
-
-        return ret
-    
-    
-    def get_order_book(self):
-        """
-        Info :Get order status
-        """
-        data = api.get_order_book()
-        return data
-    def searchscrip(self,exchange,SymbolName,ExpDate=None,type_=None,strike=[]):
-        
-        symbol = None
-        Symbol= SymbolName
-        symbolLIST= []
-        nfo=[]
-        
-        for i in range(len(strike)):
-            x= f'{SymbolName}{ExpDate}{type_}{strike[i]}'
-            symbolLIST.append(x)
-            nfo.append(exchange)
-
-        token= []
-        symbolslist= []
-        tradesymbols= None
-        ret=[]
-        ret = list(map(api.searchscrip,nfo,symbolLIST))
-        if ret != []:
-            for i in range(len(ret)):
-                symbols = ret[i]['values']
-                for symbol in symbols:
-                    token.append(symbol['token'])
-                    symbolslist.append(symbol['tsym'])
-# 
-        return symbolslist,token
-
-
-
-    def getposition (self):
-        try:
-        
-      
-            param= dict()
-            data= dict()
-            tokenkey=self.gettoken()
-            param['uid']= tokenkey['uid']
-            param['actid']=tokenkey['actid']
-    
-            param= json.dumps(param)
-            data = "jData="+param+"&jKey="+tokenkey['Token']
-            ret= requests.post(self.baseurl+"PositionBook",data=data)
-
-            print(ret.text,ret.json().keys(),'keyssssssssssss>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-            findata= dict()
-            listfin=[]
-            if ret.status_code==200:
-                position =ret.json()
-                if position['stat']=='Ok':
-                    for i in position:
-                            
-                        findata['exchange'] = i['exch']
-                        findata['tradingsymbol'] = i['tsym']
-                        findata['buyavgprice'] = i['daybuyavgprc']
-                        findata['sellavgprice'] = i['daysellavgprc']
-                        findata['netqty'] = i['netqty']
-                        findata['ltp'] = i['lp']
-                        findata['lotsize'] = i['ls']
-                        findata['unrealised'] = i['urmtom']
-                        findata['realised'] = i['rpnl']
-                        listfin.append(finaldata)
-                
-                    return listfin ,None
-                else:
-                    return None,'Not found'
-
-
-        except Exception as e:
-            print(e)
-            return None,e
-
-    
-    def allholding (self):
         try:
             
-      
-            param= dict()
-            data= dict()
-            tokenkey=self.gettoken()
-            param['uid']= tokenkey['uid']
-            param['actid']=tokenkey['actid']
-            param['prd']='C'
-    
-            param= json.dumps(param)
-            data = "jData="+param+"&jKey="+tokenkey['Token']
-            ret= requests.post(self.baseurl+"Holdings",data=data)
-            print(ret)
-            findata= dict()
-            listfin=[]
-            if ret.status_code==200:
-                position =ret.json()
-                print(position)
-                if not  position==[]:
-                    for i in position:
-                            
-                        findata['exchange'] = i['exch_tsym'][0]['exch']
-                        findata['tradingsymbol'] = i['exch_tsym'][2]['tsym']
-                        findata['symboltoken'] = i['exch_tsym'][1]['token']
-                        findata['quantity'] = i['holdqty']
-                        findata['averageprice'] = i['upldprc']
-
-
-                        listfin.append(finaldata)
-                
-                    return listfin ,None
-                else:
-                    return None,'Not found'
-
-
-        except Exception as e:
-            print(e)
-            return None,e
-
-
-
-    def checkfunds (self):
-        try:
-        
-      
-            param= dict()
-            data= dict()
-            tokenkey=self.gettoken()
-            param['uid']= tokenkey['uid']
-            # param['exch']=exchange
-            # param['token']= str(TK)
-            param['actid']=tokenkey['actid']
-    
-            param= json.dumps(param)
-            data = "jData="+param+"&jKey="+tokenkey['Token']
-            ret= requests.post(self.baseurl+"Limits",data=data)
-
-            print(ret.text,ret.json().keys(),'keyssssssssssss>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+            url ='https://preprod-openapi.stoxkart.com/reports/order-book'
+            listfin= []
+            findata= {}          
             
-            if ret.status_code==200:
-                cash =ret.json()
-                cash = cash['cash']
-                return cash ,None
+            session =self.loginsession()
+
+            balance = requests.get(url, headers=session)
+            balance = balance.json()
             
-          
-
-        except Exception as e:
-            print(e)
-            return None,e
-
-
-
-    def get_quotes (self,exchange,TK):
-        try:
-        
-        
-        # print(TK)
-            #ret = api.get_quotes(exchange=exchange, token=str(TK))
-            param= dict()
-            data= dict()
-            tokenkey=self.gettoken()
-            param['uid']= tokenkey['uid']
-            param['exch']=exchange
-            param['token']= str(TK)
-            param['actid']=tokenkey['actid']
-            # data['jData']=param
-            param= json.dumps(param)
-            # param=str([param])
-            data = "jData="+param+"&jKey="+tokenkey['Token']
-            ret= requests.post(self.baseurl+"GetQuotes",data=data)
-
-            print(ret.text,ret.json().keys(),'keyssssssssssss>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+            if balance['status'] == 'success':
+                for i in balance['data']:
+                    findata['tradingsymbol'] = i['symbol']
+                    findata['quantity'] = i['quantity']
+                    findata['averageprice'] = i['trade_average_price']
+                    # findata['ltp'] = i['last_price']
+                    # findata['profitandloss']=i['pnl']
+                    # findata['totalprofitandloss']==i.get('total_pl')
+                    # findata['totalpnlpercentage']=i.get('pnl_percentage')
+                    listfin.append(findata)
+                    findata={}
+                    print(listfin,'checklist')
             
-            if ret.status_code==200:
-                return ret.json()
-            
-            elif ret['stats']=='Not_Ok':
-                return None
+                return listfin ,None
             else:
-                return None
+                return None,'Not found'
+
 
         except Exception as e:
             print(e)
-
-    def getindex (self):
-        ret= api.GetIndexList()
-        return ret
+            return None,e
+    
     
     
 
-class WebSocketConnect(shoonyasetup):
-    def __init__(self,user, pwd, vendorcode,app_key, imei,token,tokenlist=None):
-        super().__init__(user, pwd, vendorcode,app_key, imei,token)
 
-     
-        self.NIFTY= 26000
-        self.NIFTYBANK=26009
-        self.FINNIFTY=26037
-        self.MIDCAP= 26074
-        self.SENSEX=1
-        self.key = app_key
-        feed_opened = False
-        self.ltp= None
-        self.tokenlist= tokenlist if len(tokenlist)>0 else ["NSE|26000"]
-        self.login()
 
-    def newevent(self):
-        obj = md.watchlist.objects.filter(newevent=True,broker='SHOONYA').last()
-        if obj:
-            return obj,obj.newevent
-        else:
-            return obj, False
 
-    def unsubscribetoken(self):
-            try:
 
-                obj = md.watchlist.objects.filter(subscribe=False,broker='SHOONYA')
-                tokenlist=[]
-                for  i in obj:
-                        tlist= f"{i.exchange}|{i.symboltoken}"
-                        i.delete()
-                        tokenlist.append(tlist)
-                return tokenlist
-            except Exception as e :
-                print(e)
-    def subscribetoken(self):
-            try:
 
-                obj = md.watchlist.objects.filter(subscribe=True,broker='SHOONYA')
-                tokenlist=[]
-                for  i in obj:
-                        tlist= f"{i.exchange}|{i.symboltoken}"
-                        tokenlist.append(tlist)
-                return tokenlist
-            except Exception as e :
-                print(e)
+    def placeorder(self,orderparam,orderobject,variety):
+        try:
+            url = f'https://preprod-openapi.stoxkart.com/orders/{variety}'
+            session =self.loginsession()
+
+            exchange = orderparam['exchange']
+            # tradingsymbol = orderparam['tradingsymbol']
+            transaction_type = orderparam['transaction_type'] 
+            quantity = orderparam['quantity']
+            product = orderparam['product_type']
+            order_type = orderparam['order_type']
+            validity = orderparam.get('validity', None)
+            
+            data = {
+            'exchange': exchange,
+            # 'tradingsymbol': tradingsymbol,
+            'transaction_type': transaction_type,
+            'quantity': str(quantity),  
+            'product': product,
+            'order_type': order_type,
+            
+            'validity': validity,
+        }
+            
+            response = requests.post(url, headers=session, data=data)
+            result = response.json()
+            if result['status'] == 'success':
+                orderparam['orderid'] = result['data']['order_id']  # Corrected from 'id'
+                orderobject(orderparam)  # Call the callback function
+                return result['data'], None
+            else:
+                return False, result.get('message', 'Order placement failed')
+
+        except Exception as e:
+            print(e)
+            return False, str(e)
+
+    def modifyorder(self, variety, order_id, parent_order_id=None, quantity=None,
+                price=None, order_type=None, 
+                trigger_price=None, validity=None, disclosed_quantity=None):
+        try:
+            url = f'https://preprod-openapi.stoxkart.com/orders/{variety}/{order_id}'
+            session = self.loginsession() 
+            data = {}
+            if parent_order_id is not None:
+                data['parent_order_id'] = parent_order_id
+            if quantity is not None:
+                data['quantity'] = str(quantity)  
+            if price is not None:
+                data['price'] = str(price)
+            if order_type is not None:
+                data['order_type'] = order_type
+            if trigger_price is not None:
+                data['trigger_price'] = str(trigger_price)
+            if validity is not None:
+                data['validity'] = validity
+            if disclosed_quantity is not None:
+                data['disclosed_quantity'] = str(disclosed_quantity)
+
+            response = requests.put(url, headers=session, data=data)
+            result = response.json()
+
+            if result['status'] == 'success':
+                return result['data'], None
+            else:
+                return False, result.get('message', 'Order modification failed')
+
+        except Exception as e:
+            print(e)
+            return False, str(e)
+            
 
 
     
-    async def start_thread(self):
-        def event_handler_order_update(tick_data):
-            
-            pass
-
-        def event_handler_feed_update(tick_data):
-            print(tick_data)
-            Ltp(data=tick_data)
-            objnew,newevent= self.newevent()
-            if newevent:
-                tokelistunsb= self.unsubscribetoken()
-                tokelistsubs= self.subscribetoken()
-                if len(tokelistunsb)>0:
-                    api.unsubscribe(tokelistunsb)
-                if len(tokelistsubs)>0:
-                    api.subscribe(tokelistsubs)
-                objnew.newevent= False
-                objnew.save()
-            
-            
-           
-
-        def open_callback():
-            global feed_opened
-            feed_opened = True
-            api.subscribe(self.tokenlist)
-
-
-
-        api.start_websocket( 
-                             subscribe_callback=event_handler_feed_update, 
-                             socket_open_callback=open_callback)
-
-
-        while True:
-
-            pass
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
  
+
+
+
+class WebSocketConnect(StoxkartConnect):
+    def __init__(self, api_key='', request_token=''):
+        super().__init__(api_key)
+        self.api_key = api_key
+        self.request_token = request_token
+        self.ws_url = f"ws://inmob.stoxkart.com:7763/?api_key={api_key}&request_token={request_token}"
+        self.tokens = [11536]
+        self.ws = None
+        self.setup_logging()
+        self.connect()
+        kws = KiteTicker(api_key, self.token)
+
+    def setup_logging(self):
+        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+    def on_message(self, ws, message):
+        try:
+            data = json.loads(message)
+            if 'MsgCode' in data:
+                if data['MsgCode'] == 61: 
+                    logging.info(f"LTP Data: {data}")
+                else:
+                    logging.info(f"Received message with MsgCode {data['MsgCode']}: {data}")
+            else:
+                logging.info(f"Received message: {data}")
+        except json.JSONDecodeError:
+            logging.error("Failed to parse message as JSON")
+
+    def on_open(self, ws):
+        logging.info("Successfully connected to Stoxkart WebSocket")
+        # Subscribe to tokens
+        for token in self.tokens:
+            subscribe_request = {
+                "MsgCode": 72,  
+                "exchange": "NSE", 
+                "token": str(token)
+            }
+            ws.send(json.dumps(subscribe_request))
+            logging.info(f"Subscribed to token: {token}")
+
+    def on_close(self, ws, code, reason):
+        logging.info(f"Connection closed: {code} - {reason}")
+
+    def on_error(self, ws, error):
+        logging.error(f"Connection error: {error}")
+    def on_reconnect(ws, attempts_count):
+            logging.info("Reconnecting: {}".format(attempts_count))
+
+    def connect(self):
+        self.ws = websocket.WebSocketApp(
+            self.ws_url,
+            on_message=self.on_message,
+            on_open=self.on_open,
+            on_close=self.on_close,
+            on_error=self.on_error
+        )
+        self.ws.run_forever()
+
+    def change_mode(self):
+        
+        pass
+
+    if __name__ == "__main__":
+
+        api_key = ""  
+        request_token = ""  
+        ws_client = WebSocketConnect(api_key, request_token)
+        
+        count = 0
+        while True:
+            count += 1
+            if count % 2 == 0:
+                logging.info("### Set mode to LTP for all tokens")
+                ws_client.change_mode()
+            else:
+                logging.info("### Set mode to quote for all tokens")
+                ws_client.change_mode()
+            time.sleep(5)

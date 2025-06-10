@@ -19,7 +19,7 @@ from django.urls import path
 from Tradingbot import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('api/admin/', admin.site.urls),
     path('api/csrf_token',views.get_csrf_token,name= "token"),
 
     path('api/login',views.LoginAPI.as_view(),name='login'),

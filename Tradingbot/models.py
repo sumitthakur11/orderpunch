@@ -15,7 +15,10 @@ brokerlist={
     "SAMCO":"SAMCO",
     "FLATTRADE":"FLATTRADE",
     "BIGUL":"BIGUL",
-    "STOXKART":"STOXKART"
+    "STOXKART":"STOXKART",
+    "UPSTOX":"UPSTOX",
+    "ALICEBLUE":"ALICEBLUE",
+    "HDFC":"HDFC"
 
     
 }
@@ -89,7 +92,7 @@ class orderobject(models.Model):
     side=models.TextField(null=True,blank=True,default=None)
     orderstatus= models.TextField(null=True,blank=True,default='')
     ltp=models.FloatField(null=True,blank=True,default=None)
-    lotsize= models.IntegerField(null=True,blank=True,default=None)
+    lotsize= models.CharField(null=True,blank=True,default=None,max_length=200)
     sellorderstatus= models.CharField(null=True,blank=True,default='',max_length=20,choices=statuslist)
     buyorderstatus= models.CharField(null=True,blank=True,default='',max_length=20,choices=statuslist)
     paper= models.BooleanField(null=True,blank=True,default=False)
@@ -97,6 +100,7 @@ class orderobject(models.Model):
     sellprice=models.FloatField(null=True,blank=True,default=0)
     instrument= models.CharField(null=True,blank=True,default='',max_length=100)
     discloseqty= models.CharField(null=True,blank=True,default='',max_length=100)
+    lastmodifiedtime= models.CharField(null=True,blank=True,default='',max_length=100)
 
 
 
@@ -155,6 +159,8 @@ class Allpositions(models.Model):
     unrealised= models.CharField(null=True,blank=True,default=None,max_length=100)
     sellavgprice =models.CharField(null=True,blank=True,default=None,max_length=100)
     instrument= models.CharField(null=True,blank=True,default=None,max_length=100)
+    lastmodifiedtime= models.CharField(null=True,blank=True,default='',max_length=100)
+
 
 
 

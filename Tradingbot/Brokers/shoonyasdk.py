@@ -498,6 +498,10 @@ class HTTP(shoonyasetup):
                     return listfin ,None
                 else:
                     return None,'Not found'
+            else:
+                    return None,'Not found'
+
+
 
 
         except Exception as e:
@@ -541,13 +545,15 @@ class HTTP(shoonyasetup):
                 else:
                     return None,'Not found'
 
+            else:
+                    return None,'Not found'
 
         except Exception as e:
             print(e)
             return None,e
 
 
-    def orderbook (self):
+    def orderBook (self):
         try:
             
       
@@ -565,9 +571,11 @@ class HTTP(shoonyasetup):
             listfin=[]
             if ret.status_code==200:
                 position =ret.json()
+                if position['stat']=='Not_Ok':
+                    return None
+                else: return position
                 print(position)
                                 
-                return position
             else:
                     return None
 
@@ -593,12 +601,16 @@ class HTTP(shoonyasetup):
             data = "jData="+param+"&jKey="+tokenkey['Token']
             ret= requests.post(self.baseurl+"Limits",data=data)
 
-            print(ret.text,ret.json().keys(),'keyssssssssssss>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+            print(ret.text,'keyssssssssssss>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
             
-            if ret.status_code==200:
-                cash =ret.json()
-                cash = cash['cash']
-                return cash ,None
+            cash =ret.json()
+            if cash['stat']=='Not_Ok':
+                    return None,cash
+            else:
+                    print('hereee')
+
+                    cash = cash['cash']
+                    return cash ,None
             
           
 

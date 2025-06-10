@@ -1,6 +1,6 @@
 import Tradingbot.models as md 
 import Tradingbot.serializers as ser 
-from .Brokers import shoonyasdk,Angelsdk,motilalsdk,growwsdk,dhansdk,flattradesdk,stoxkartsdk,fyerssdk
+from .Brokers import shoonyasdk,Angelsdk,motilalsdk,growwsdk,dhansdk,flattradesdk,stoxkartsdk,fyerssdk,upstoxsdk,Alicebluesdk,zerodhasdk,hdfcsdk,samcosdk
 from concurrent.futures import ThreadPoolExecutor
 import pathlib 
 import os
@@ -113,24 +113,75 @@ class utility:
                      
                      
                      return excp
-            elif br.brokername.lower()=='GROWW':
+            elif br.brokername.lower()=='upstox':
                 bruser= br.accountnumber
-                pwd= br.password
                 apikey= br.apikey
                 token= br.AuthToken
-                self.motilal = growwsdk.growwsetup(token)
-                flag,excp =self.motilal.login()
-                if flag:
-                     br.valid=True
-                     br.save()
-                else: 
-                     br.valid=False
-                     br.save()
 
-                     
-                     
-                     return excp
+                self.upstox = upstoxsdk.Upstoxapi(bruser,apikey)
+                t = threading.Thread(target=self.upstox.login)
+                t.start()   
+            elif br.brokername.lower()=='aliceblue':
+                bruser= br.accountnumber
+                apikey= br.apikey
+                token= br.AuthToken
+                pwd= br.password
+                secret= br.secretkey
+                print(bruser)
+                print(apikey)
+                print(token)
+                print(secret)
+                print(pwd)
 
+
+                Aliceblue= Alicebluesdk.Aliceapi(bruser,pwd,apikey,secret,token)
+                t = threading.Thread(target=Aliceblue.login)
+                t.start()   
+
+            elif br.brokername.lower()=='zerodha':
+                bruser= br.accountnumber
+                apikey= br.apikey
+                token= br.AuthToken
+                secret=br.secretkey
+
+                zerodha= zerodhasdk.kitesetup(bruser,apikey,secret)
+                t = threading.Thread(target=zerodha.login)
+                t.start()   
+
+            elif br.brokername.lower()=='stoxkart':
+                bruser= br.accountnumber
+                apikey= br.apikey
+                token= br.AuthToken
+                secret=br.secretkey
+                stoxkart= stoxkartsdk.StoxkartConnect(apikey,secret,bruser,br.password)
+                t = threading.Thread(target=stoxkart.login3 )
+                t.start()   
+
+            elif br.brokername.lower()=='flattrade':
+                bruser= br.accountnumber
+                apikey= br.apikey
+                token= br.AuthToken
+                secret=br.secretkey
+                stoxkart= flattradesdk.FlattradeConnect(apikey,secret,bruser,br.password)
+                t = threading.Thread(target=stoxkart.login2)
+                t.start()   
+
+            elif br.brokername.lower()=='hdfc':
+                bruser= br.accountnumber
+                apikey= br.apikey
+                token= br.AuthToken
+                secret=br.secretkey
+                hdfcuser= hdfcsdk.HDFCSkyConnect(apikey,secret,bruser)
+                t = threading.Thread(target=hdfcuser.login2)
+                t.start() 
+            elif br.brokername.lower()=='samco':
+                bruser= br.accountnumber
+                apikey= br.apikey
+                token= br.AuthToken
+                secret=br.secretkey
+                samco= samcosdk.SAMCOConnect(apikey,secret,bruser,br.password)
+                t = threading.Thread(target=samco.login)
+                t.start() 
 
         def checkfunds(self):
             accountlist= md.Broker.objects.filter(user=1,valid=True)
@@ -155,7 +206,7 @@ class utility:
 
                             br.save()
                         else: 
-                            br.funds="Unable to Fetch"
+                            br.funds="Unable to Fetch Login your account Again"
                             # br.valid=False
 
                             br.save()
@@ -179,7 +230,7 @@ class utility:
                             br.valid= True
                             br.save()
                         else: 
-                            br.funds="Unable to Fetch"
+                            br.funds="Unable to Fetch Login your account Again"
                             # br.valid= False
 
                             br.save()
@@ -200,7 +251,7 @@ class utility:
                             br.valid= True
                             br.save()
                         else: 
-                            br.funds="Unable to Fetch"
+                            br.funds="Unable to Fetch Login your account Again"
                             # br.valid= False
 
                             br.save()
@@ -219,7 +270,7 @@ class utility:
                             br.valid= True
                             br.save()
                         else: 
-                            br.funds="Unable to Fetch"
+                            br.funds="Unable to Fetch Login your account Again"
                             # br.valid= False
 
                             br.save()
@@ -233,18 +284,149 @@ class utility:
                         print(fund)
 
                         if fund:
-                            br.funds=fund['net']
+                            br.funds=fund
                             br.valid= True
                             br.save()
                         else: 
-                            br.funds="Unable to Fetch"
+                            br.funds="Unable to Fetch Login your account Again"
                             br.valid= False
+
+                            br.save()
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+
+                    elif br.brokername.lower()=='upstox':
+                        print('heresssssss1')
+                        token= br.AuthToken
+                        bruser= br.accountnumber
+                        apikey= br.apikey
+
+                        self.broker = upstoxsdk.HTTP(bruser,apikey)
+                        fund,excp=self.broker.checkfunds()
+                        print(fund)
+
+                        if fund:
+                            br.funds=fund
+                            br.valid= True
+                            br.save()
+                        else: 
+                            br.funds="Unable to Fetch Login your account Again"
+                            br.valid= False
+
+                            br.save()
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+                    elif br.brokername.lower()=='dhan':
+                        print('heresssssss')
+                        token= br.AuthToken
+                        bruser= br.accountnumber
+                        apikey= br.apikey
+
+                        dhan = dhansdk.HTTP(bruser,token)
+                        fund,excp=dhan.checkfunds()
+                        print(fund)
+
+                        if fund:
+                            br.funds=fund
+                            br.valid= True
+                            br.save()
+                        else: 
+                            br.funds="Unable to Fetch Login your account Again"
+                            br.valid= False
+
+                            br.save()
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+                    elif br.brokername.lower()=='zerodha':
+                        print('heresssssss')
+                        token= br.AuthToken
+                        bruser= br.accountnumber
+                        apikey= br.apikey
+                        secret=br.secretkey
+
+                        zerodha = zerodhasdk.HTTP(bruser,apikey,secret)
+                        fund,excp=zerodha.checkfunds()
+                        print(fund)
+
+                        if fund:
+                            br.funds=fund
+                            br.save()
+                        else: 
+                            br.funds="Unable to Fetch Login your account Again"
+
+                            br.save()
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+
+                    elif br.brokername.lower()=='aliceblue':
+                        token= br.AuthToken
+                        bruser= br.accountnumber
+                        apikey= br.apikey
+                        secret=br.secretkey
+                        pwd= br.password
+
+                        Aliceblue= Alicebluesdk.HTTP(bruser,pwd,apikey,secret,token)
+                        fund,excp=Aliceblue.checkfunds()
+                        print(fund)
+
+                        if fund:
+                            br.funds=fund
+                            br.save()
+                        else: 
+                            br.funds="Unable to Fetch Login your account Again"
 
                             br.save()
                             logpathfron.error(f'connect to administration with following error:-{excp}')
 
 
 
+                    elif br.brokername.lower()=='stoxkart':
+                            bruser= br.accountnumber
+                            apikey= br.apikey
+                            token= br.AuthToken
+                            secret=br.secretkey
+
+                            stoxkart= stoxkartsdk.HTTP(apikey,secret,bruser)
+                            fund,excp=stoxkart.checkfunds()
+                            if fund:
+                                br.funds=fund
+                                br.save()
+                            else: 
+                                br.funds="Unable to Fetch Login your account Again"
+
+                                br.save()
+                                logpathfron.error(f'connect to administration with following error:-{excp}')
+                    elif br.brokername.lower()=='samco':
+                            bruser= br.accountnumber
+                            apikey= br.apikey
+                            token= br.AuthToken
+                            secret=br.secretkey
+
+                            samco= samcosdk.HTTP(apikey,secret,bruser,br.password)
+
+                            fund,excp=samco.checkfunds()
+                            if fund:
+                                br.funds=fund
+                                br.save()
+                            else: 
+                                br.funds="Unable to Fetch Login your account Again"
+
+                                br.save()
+                                logpathfron.error(f'connect to administration with following error:-{excp}')
+
+                    elif br.brokername.lower()=='hdfc':
+                            bruser= br.accountnumber
+                            apikey= br.apikey
+                            token= br.AuthToken
+                            secret=br.secretkey
+
+                            hdfcuser= hdfcsdk.HTTP(apikey,secret,bruser)
+
+                            fund,excp=hdfcuser.checkfunds()
+                            if fund:
+                                br.funds=fund
+                                br.save()
+                            else: 
+                                br.funds="Unable to Fetch Login your account Again"
+
+                                br.save()
+                                logpathfron.error(f'connect to administration with following error:-{excp}')
 
 
 
@@ -263,6 +445,7 @@ class utility:
                     self.broker = shoonyasdk.HTTP(bruser,pwd,vendorcode,apikey,imei,token)
 
                     fund,excp= self.broker.getposition()
+                    
                     if fund:
                         
 
@@ -298,9 +481,9 @@ class utility:
                     fund,excp=self.broker.getposition()
                     time.sleep(0.5)
                     if fund:
-
+                        md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
+                        
                         for data in fund:
-                            md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
                             data['accountnumber']=br.accountnumber
                             data['user']=1
                             data['broker']='ANGEL'
@@ -324,9 +507,9 @@ class utility:
                         print(fund)
 
                         if fund:
-
+                            md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
+                            
                             for data in fund:
-                                md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
                                 data['accountnumber']=br.accountnumber
                                 data['user']=1
                                 data['broker']='FYERS'
@@ -347,9 +530,10 @@ class utility:
                         fund,excp=self.broker.getposition()
 
                         if fund:
+                            md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
 
                             for data in fund:
-                                md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
+                                
                                 data['accountnumber']=br.accountnumber
                                 data['user']=1
                                 data['broker']='MOTILAL'
@@ -370,9 +554,9 @@ class utility:
                         print(fund)
 
                         if fund:
-
+                            md.Allpositions.objects.filter(accountnumber=br.brokerid).delete()
+                            
                             for data in fund:
-                                md.Allpositions.objects.filter(accountnumber=br.brokerid).delete()
                                 data['accountnumber']=br.brokerid
                                 data['user']=1
                                 data['broker']='GROWW'
@@ -388,9 +572,136 @@ class utility:
                         
 
 
+                elif br.brokername.lower()=='upstox':
+
+                        token= br.AuthToken
+
+                        UPSTOX = upstoxsdk.HTTP(br.accountnumber,br.apikey)
+                        fund,excp=UPSTOX.getposition()
+
+                        if fund:
+                            md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
+                            
+                            for data in fund:
+                                data['accountnumber']=br.accountnumber
+                                data['user']=1
+                                data['broker']='UPSTOX'
+                                data['nickname']=br.nickname
+                                
+                                serialize = ser.Allpositions(data=data)
+                                if serialize.is_valid(raise_exception=True):
+                                    serialize.save()
+                        
+                        else: 
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+                
+                elif br.brokername.lower()=='zerodha':
+
+                        token= br.AuthToken
+
+                        bruser= br.accountnumber
+                        apikey= br.apikey
+                        secret= br.secretkey
+                        zerodha = zerodhasdk.HTTP(bruser,apikey,secret)
+                        fund,excp=zerodha.getposition()
+
+                        if fund:
+                            md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
+                            
+                            for data in fund:
+                                data['accountnumber']=br.accountnumber
+                                data['user']=1
+                                data['broker']='UPSTOX'
+                                data['nickname']=br.nickname
+                                
+                                serialize = ser.Allpositions(data=data)
+                                if serialize.is_valid(raise_exception=True):
+                                    serialize.save()
+                        
+                        else: 
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+
+                elif br.brokername.lower()=='stoxkart':
+                    bruser= br.accountnumber
+                    apikey= br.apikey
+                    token= br.AuthToken
+                    secret=br.secretkey
+
+                    stoxkart= stoxkartsdk.StoxkartConnect(apikey,secret,bruser)
+
+                elif br.brokername.lower()=='samco':
+                    bruser= br.accountnumber
+                    apikey= br.apikey
+                    token= br.AuthToken
+                    secret=br.secretkey
+
+                    samco= samcosdk.HTTP(apikey,secret,bruser,br.password)
+                    fund,excp=samco.getposition()
+                    if fund:
+                            md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
+                            
+                            for data in fund:
+                                data['accountnumber']=br.accountnumber
+                                data['user']=1
+                                data['broker']='SAMCO'
+                                data['nickname']=br.nickname
+                                
+                                serialize = ser.Allpositions(data=data)
+                                if serialize.is_valid(raise_exception=True):
+                                    serialize.save()
+                        
+                    else: 
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+
+                elif br.brokername.lower()=='hdfc':
+                    bruser= br.accountnumber
+                    apikey= br.apikey
+                    token= br.AuthToken
+                    secret=br.secretkey
+
+                    hdfcuser= hdfcsdk.HTTP(apikey,secret,bruser)
+                    fund,excp=hdfcuser.getposition()
+                    if fund:
+                            md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
+                            
+                            for data in fund:
+                                data['accountnumber']=br.accountnumber
+                                data['user']=1
+                                data['broker']='SAMCO'
+                                data['nickname']=br.nickname
+                                
+                                serialize = ser.Allpositions(data=data)
+                                if serialize.is_valid(raise_exception=True):
+                                    serialize.save()
+                        
+                    else: 
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+
+                elif br.brokername.lower()=='aliceblue':
+                    bruser= br.accountnumber
+                    apikey= br.apikey
+                    token= br.AuthToken
+                    secret=br.secretkey
+
+                    Aliceblue= Alicebluesdk.HTTP(bruser,br.password,apikey,secret,token)
+                    fund,excp=Aliceblue.getposition()
+                    if fund:
+                            md.Allpositions.objects.filter(accountnumber=br.accountnumber).delete()
+                            
+                            for data in fund:
+                                data['accountnumber']=br.accountnumber
+                                data['user']=1
+                                data['broker']='SAMCO'
+                                data['nickname']=br.nickname
+                                
+                                serialize = ser.Allpositions(data=data)
+                                if serialize.is_valid(raise_exception=True):
+                                    serialize.save()
+                        
+                    else: 
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
 
 
-        
 
         def getholding(self):
             accountlist= md.Broker.objects.filter(user=1,valid=True)
@@ -537,8 +848,8 @@ class utility:
                             data['nickname']= br.nickname
 
 
-                            data['totalprofitandloss']=fund['totalholding']['totalprofitandloss']
-                            data['totalpnlpercentage']=fund['totalholding']['totalpnlpercentage']
+                            # data['totalprofitandloss']=fund['totalholding']['totalprofitandloss']
+                            # data['totalpnlpercentage']=fund['totalholding']['totalpnlpercentage']
 
                             serialize = ser.allholding(data=data)
                             if serialize.is_valid(raise_exception=True):
@@ -548,12 +859,147 @@ class utility:
                     else: 
                         logpathfron.error(f'connect to administration with following error:-{excp}')
 
+                
+                elif br.brokername.lower()=='upstox':
 
+                        token= br.AuthToken
+
+                        UPSTOX = upstoxsdk.HTTP(br.accountnumber,br.apikey)
+                        fund,excp=UPSTOX.allholding()
+
+                        if fund:
+                            md.allholding.objects.filter(accountnumber=br.brokerid).delete()
+
+                            for data in fund:
+                                data['user']= 1
+
+                                data['broker']= br.brokername
+                                data['accountnumber']=br.brokerid
+                                data['nickname']= br.nickname
+                                
+                                serialize = ser.allholding(data=data)
+                                if serialize.is_valid(raise_exception=True):
+                                    serialize.save()
                         
+                        else: 
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+
+                elif br.brokername.lower()=='zerodha':
+
+                        token= br.AuthToken
+
+                           
+                        bruser= br.accountnumber
+                        apikey= br.apikey
+                        secret= br.secretkey
+                        zerodha = zerodhasdk.HTTP(bruser,apikey,secret)
+                        fund,excp=zerodha.allholding()
+
+                        if fund:
+                            md.allholding.objects.filter(accountnumber=br.brokerid).delete()
+
+                            for data in fund:
+                                data['user']= 1
+
+                                data['broker']= br.brokername
+                                data['accountnumber']=br.brokerid
+                                data['nickname']= br.nickname
+                                
+                                serialize = ser.allholding(data=data)
+                                if serialize.is_valid(raise_exception=True):
+                                    serialize.save()
+                        
+                        else: 
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+                elif br.brokername.lower()=='samco':
+
+                        token= br.AuthToken
+
+                           
+                        bruser= br.accountnumber
+                        apikey= br.apikey
+                        secret= br.secretkey
+                        samco= samcosdk.HTTP(apikey,secret,bruser,br.password)
+                        fund,excp=samco.allholding()
+
+                        if fund:
+                            md.allholding.objects.filter(accountnumber=br.brokerid).delete()
+
+                            for data in fund:
+                                data['user']= 1
+
+                                data['broker']= br.brokername
+                                data['accountnumber']=br.brokerid
+                                data['nickname']= br.nickname
+                                
+                                serialize = ser.allholding(data=data)
+                                if serialize.is_valid(raise_exception=True):
+                                    serialize.save()
+                        
+                        else: 
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+
+                elif br.brokername.lower()=='hdfc':
+
+                        token= br.AuthToken
+
+                           
+                        bruser= br.accountnumber
+                        apikey= br.apikey
+                        secret= br.secretkey
+                        hdfcuser= hdfcsdk.HTTP(apikey,secret,bruser)
+
+                        fund,excp=hdfcuser.allholding()
+
+                        if fund:
+                            md.allholding.objects.filter(accountnumber=br.brokerid).delete()
+
+                            for data in fund:
+                                data['user']= 1
+
+                                data['broker']= br.brokername
+                                data['accountnumber']=br.brokerid
+                                data['nickname']= br.nickname
+                                
+                                serialize = ser.allholding(data=data)
+                                if serialize.is_valid(raise_exception=True):
+                                    serialize.save()
+                        
+                        else: 
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+                elif br.brokername.lower()=='aliceblue':
+
+                        token= br.AuthToken
+
+                           
+                        bruser= br.accountnumber
+                        apikey= br.apikey
+                        secret= br.secretkey
+                        Aliceblue= Alicebluesdk.HTTP(bruser,pwd,apikey,secret,token)
+
+                        fund,excp=Aliceblue.allholding()
+
+                        if fund:
+                            md.allholding.objects.filter(accountnumber=br.brokerid).delete()
+
+                            for data in fund:
+                                data['user']= 1
+
+                                data['broker']= br.brokername
+                                data['accountnumber']=br.brokerid
+                                data['nickname']= br.nickname
+                                
+                                serialize = ser.allholding(data=data)
+                                if serialize.is_valid(raise_exception=True):
+                                    serialize.save()
+                        
+                        else: 
+                            logpathfron.error(f'connect to administration with following error:-{excp}')
+                    
 
         
 
-
+                
 
 
 
@@ -598,10 +1044,40 @@ class utility:
                                                     pwd=pwd, 
                                                     api_key=apikey, )
                                 order_ids=Angel.cancel_order(orderobj.orderid)
-                            return order_ids
+
+                            if br.brokername=='GROWW':
+                           
 
                                 
+                                GROWW = growwsdk.HTTP(token )
+                                order_ids=GROWW.cancel_order(orderobj.exchange,orderobj.orderid)
 
+                            if  br.brokername=='MOTILAL':
+                                MOTILAL = motilalsdk.HTTP(bruser,pwd,apikey,token)
+                                order_ids=MOTILAL.cancel_order(orderobj.orderid)
+
+                            if  br.brokername=='ZERODHA':
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret= br.secretkey
+                                zerodha = zerodhasdk.HTTP(bruser,apikey,secret)  
+                                order_ids=zerodha.cancel_order(orderobj.orderid)
+
+                            if  br.brokername=='samco':
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret= br.secretkey
+                                samco= samcosdk.HTTP(apikey,secret,bruser,br.password)
+                                order_ids=samco.cancel_order(orderobj.orderid)
+                            if  br.brokername=='hdfc':
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret= br.secretkey
+                                hdfcuser= hdfcsdk.HTTP(apikey,secret,bruser)
+                                order_ids=hdfcuser.cancel_order(orderobj.orderid)
+
+                            
+                              
                     else:
                             
                             msg=f"Account Number {br.accountnumber} Nickname {br.nickname} is not logged in. Kindly Logged in to the Account"
@@ -634,8 +1110,71 @@ class utility:
                         order.avg_price=i['averageprice']
                         order.save()
 
+            if broker =='GROWW':
+                for i in orderbook:
+                    order= md.orderobject.objects.filter(orderid=i['groww_order_id']).last()
+                    if order:
+                        order.orderstatus= 'OPEN' if  i['order_status'].upper()=='ACKED' else i['order_status'].upper()
+                        order.avg_price=i['average_fill_price']
+                        order.save()
+            if broker =='DHAN':
+                for i in orderbook:
+                    order= md.orderobject.objects.filter(orderid=i['orderId']).last()
+                    if order:
+                        order.orderstatus= i['orderStatus'].upper()
+                        order.avg_price=i['price']
+                        order.save()
+            if broker =='MOTILAL':
+                for i in orderbook:
+                    order= md.orderobject.objects.filter(orderid=i['uniqueorderid']).last()
+                    if order:
+                        order.orderstatus='COMPLETED' if i['orderstatus'].upper()== 'TRADED' else  i['orderstatus'].upper()
+                        order.avg_price=i['price']
+                        order.lastmodifiedtime= i['lastmodifiedtime']
+                        order.save()
 
+            if broker =='UPSTOX':
+                for i in orderbook:
+                    order= md.orderobject.objects.filter(orderid=i['order_id']).last()
+                    if order:
+                        order.orderstatus=i['status'].upper()
+                        order.avg_price=i['average_price']
+                        order.lastmodifiedtime= i['order_timestamp']
+                        order.save()
+            if broker =='ZERODHA':
+                for i in orderbook:
+                    order= md.orderobject.objects.filter(orderid=i['order_id']).last()
+                    if order:
+                        order.orderstatus=i['status'].upper()
+                        order.avg_price=i['average_price']
+                        order.lastmodifiedtime= i['order_timestamp']
+                        order.save()
 
+            if broker =='SAMCO':
+                for i in orderbook:
+                    order= md.orderobject.objects.filter(orderid=i['orderNumber']).last()
+                    if order:
+                        order.orderstatus=i['orderStatus'].upper()
+                        order.avg_price=i['averagePrice']
+                        order.lastmodifiedtime= i['orderTime']
+                        order.save()
+            if broker =='HDFC':
+                for i in orderbook:
+                    order= md.orderobject.objects.filter(orderid=i['oms_order_id']).last()
+                    if order:
+                        order.orderstatus=i['order_status'].upper()
+                        order.avg_price=i['average_trade_price']
+                        order.lastmodifiedtime= i['order_entry_time']
+                        order.save()
+            if broker =='ALICEBLUE':
+                for i in orderbook:
+                    # print(i)
+                    order= md.orderobject.objects.filter(orderid=i['Nstordno']).last()
+                    if order:
+                        order.orderstatus=i['Status'].upper()
+                        order.avg_price=i['Avgprc']
+                        order.lastmodifiedtime= i['orderentrytime']
+                        order.save()
 
 
               
@@ -654,6 +1193,7 @@ class utility:
                             apikey= br.apikey
                             imei= br.imei
                             token= br.AuthToken
+                            print(br.brokername)
                             if br.brokername=='SHOONYA':
                                         self.broker = shoonyasdk.HTTP(token=token,
                                                             user=bruser, 
@@ -662,7 +1202,8 @@ class utility:
                                                             app_key=apikey, 
                                                             imei=imei)
                                         order_ids=self.broker.orderBook()
-                                        self.asignorderstatus(order_ids,'SHOONYA')
+                                        if order_ids:
+                                            self.asignorderstatus(order_ids,'SHOONYA')
                             if br.brokername=='ANGEL':
                                     
 
@@ -672,13 +1213,94 @@ class utility:
                                                             pwd=pwd, 
                                                             api_key=apikey, )
                                         order_ids=Angel.orderBook()
-                                        self.asignorderstatus(order_ids,'ANGEL')
+                                        time.sleep(1)
+                                        if order_ids:
 
-                            return order_ids
+                                            self.asignorderstatus(order_ids,'ANGEL')
+
+
+                            if br.brokername=='GROWW':
+                                    
+
+                                        
+                                        groww = growwsdk.HTTP(token)
+                                        order_ids=groww.orderBook()
+                                        print(order_ids)
+                                        self.asignorderstatus(order_ids,'GROWW')
+                            if  br.brokername=='DHAN':
+                                dhan = dhansdk.HTTP(bruser,token)
+                                order_ids=dhan.orderBook()
+                                print(order_ids)
+                                self.asignorderstatus(order_ids,'DHAN')
+                            if  br.brokername=='MOTILAL':
+                                MOTILAL = motilalsdk.HTTP(bruser,pwd,apikey,token)
+                                order_ids=MOTILAL.orderBook()
+                                print(order_ids)
+                                if order_ids['data']:
+
+                                    self.asignorderstatus(order_ids['data'],'MOTILAL')
+
+                            if  br.brokername=='UPSTOX':
+                                UPSTOX = upstoxsdk.HTTP(bruser,apikey)
+                                order_ids=UPSTOX.orderBook()
+                                print(order_ids)
+                                if order_ids:
+                                    self.asignorderstatus(order_ids,'UPSTOX')
+
+                            if  br.brokername=='ZERODHA':
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret= br.secretkey
+                                zerodha = zerodhasdk.HTTP(bruser,apikey,secret)
+                                order_ids=zerodha.orderBook()
+                              
+                                print(order_ids)
+                                if order_ids:
+
+                                    self.asignorderstatus(order_ids,'ZERODHA')
+                            if  br.brokername=='SAMCO':
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret= br.secretkey
+                                samco= samcosdk.HTTP(apikey,secret,bruser,br.password)
+
+                                order_ids=samco.orderBook()
+                              
+                                print(order_ids)
+                                if order_ids:
+
+                                    self.asignorderstatus(order_ids,'SAMCO')
+
+                            if  br.brokername=='HDFC':
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret= br.secretkey
+                                hdfcuser= hdfcsdk.HTTP(apikey,secret,bruser)
+
+                                order_ids=hdfcuser.orderBook()
+                              
+                                if order_ids:
+
+                                    self.asignorderstatus(order_ids,'HDFC')
+
+                            if  br.brokername=='ALICEBLUE':
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret= br.secretkey
+                                Aliceblue= Alicebluesdk.HTTP(bruser,pwd,apikey,secret,token)
+
+                                order_ids=Aliceblue.orderBook()
+                                print(order_ids)
+                              
+                                if order_ids:
+
+                                    self.asignorderstatus(order_ids,'ALICEBLUE')
+
+
 
                                 
 
-                    else:
+                        else:
                             
                             msg=f"Account Number {br.accountnumber} Nickname {br.nickname} is not logged in. Kindly Logged in to the Account"
                             logpathfron.error(msg)
@@ -695,7 +1317,9 @@ class utility:
 
         def modifyorder(self,data):
             try:
+                print(data)
                 orderobj = md.orderobject.objects.filter(orderid=data['orderid']).last()
+
                 br=md.Broker.objects.filter(accountnumber=orderobj.accountnumber).last()
                 if br.valid:
                         bruser= br.accountnumber
@@ -722,7 +1346,50 @@ class utility:
                                                 pwd=pwd, 
                                                 api_key=apikey, )
                             order_ids=Angel.modifyorder(data,orderobj)
-                        return order_ids
+                        if br.brokername=='GROWW':
+                           
+
+                            
+                            GROWW = growwsdk.HTTP(token )
+                            order_ids=GROWW.modifyorder(data,orderobj)
+
+                        if br.brokername=='MOTILAL':
+                            motilal = motilalsdk.HTTP(bruser,pwd,apikey,token)
+                            order_ids=motilal.modifyorder(data,orderobj)
+
+
+                        if br.brokername=='ZERODHA':
+                           
+
+
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret=br.secretkey
+
+                                zerodha = zerodhasdk.HTTP(bruser,apikey,secret)
+                                order_ids=zerodha.modifyorder(data,orderobj)
+
+                        if br.brokername=='hdfc':
+                           
+
+
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret=br.secretkey
+
+                                hdfcuser= hdfcsdk.HTTP(apikey,secret,bruser)
+                                order_ids=hdfcuser.modifyorder(data,orderobj)
+
+                        if br.brokername=='samco':
+                           
+
+
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret=br.secretkey
+
+                                samco= samcosdk.HTTP(apikey,secret,bruser,br.password)
+                                order_ids=samco.modifyorder(data,orderobj)
 
                             
 
@@ -813,8 +1480,64 @@ class utility:
                                 orderparams['nickname']=br.nickname
 
                                 
-                                FYERS = motilalsdk.HTTP(bruser,pwd,apikey,token)
-                                order_ids=FYERS.placeorder(orderparams,self.orderobject)
+                                GROWW = growwsdk.HTTP(token)
+                                order_ids=GROWW.placeorder(orderparams,self.orderobject)
+
+                            if br.brokername=='UPSTOX':
+                                orderparams['broker']=br.brokername
+                                orderparams['nickname']=br.nickname
+
+                                
+                                UPSTOX = upstoxsdk.HTTP(bruser,apikey)
+                                order_ids=UPSTOX.placeorder(orderparams,self.orderobject)
+
+                            if br.brokername=='DHAN':
+                                orderparams['broker']=br.brokername
+                                orderparams['nickname']=br.nickname
+
+                                
+                                dhan = dhansdk.HTTP(bruser,token)
+                                order_ids=dhan.placeorder(orderparams,self.orderobject)
+                            if br.brokername=='ZERODHA':
+                                orderparams['broker']=br.brokername
+                                orderparams['nickname']=br.nickname
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret=br.secretkey
+
+                                zerodha = zerodhasdk.HTTP(bruser,apikey,secret)
+                                fund,excp=zerodha.placeorder(orderparams,self.orderobject)
+                            if br.brokername=='SAMCO':
+                                orderparams['broker']=br.brokername
+                                orderparams['nickname']=br.nickname
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret=br.secretkey
+
+                                samco= samcosdk.HTTP(apikey,secret,bruser,br.password)
+                                fund,excp=samco.placeorder(orderparams,self.orderobject)
+                            if br.brokername=='HDFC':
+                                orderparams['broker']=br.brokername
+                                orderparams['nickname']=br.nickname
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret=br.secretkey
+
+                                hdfcuser= hdfcsdk.HTTP(apikey,secret,bruser)
+                                fund,excp=hdfcuser.placeorder(orderparams,self.orderobject)
+
+                            if br.brokername=='ALICEBLUE':
+                                orderparams['broker']=br.brokername
+                                orderparams['nickname']=br.nickname
+                                bruser= br.accountnumber
+                                apikey= br.apikey
+                                secret=br.secretkey
+                                Aliceblue= Alicebluesdk.HTTP(bruser,pwd,apikey,secret,token)
+                                fund,excp=Aliceblue.placeorder(orderparams,self.orderobject)
+
+
+                                
+                               
 
 
                         else:
@@ -961,12 +1684,11 @@ class utility:
         
 
         def dhanwebsocket(self):
-            obj = md.watchlist.objects.filter(broker='ANGEL',subscribe= True)
-            broker= md.Broker.objects.filter(brokername='ANGEL').last()
+            broker= md.Broker.objects.filter(brokername='DHAN').last()
             autoken= broker.AuthToken
             accountno= broker.accountnumber
             webobj= dhansdk.WebSocketConnect(accountno,autoken)
-            asyncio.run(webobj.start_thread())
+            webobj.start_thread()
         
         def fyerswebsocket(self):
            
@@ -982,7 +1704,19 @@ class utility:
                 logpathfron.error('no  access token found to get watchlist data kindly login at least 1 fyers account')
 
 
-
+        def upstoxwebsoket(self):
+           
+                
+            broker= md.Broker.objects.filter(brokername='UPSTOX',valid=True).last()
+            autoken= broker.imei
+            accountno= broker.accountnumber
+            secretkey= broker.secretkey
+            apikey= broker.apikey
+            if autoken:
+                webobj= upstoxsdk.WebSocketConnect(accountno,apikey)
+                webobj.start_thread()
+            else:
+                logpathfron.error('no  access token found to get watchlist data kindly login at least 1 fyers account')
 
 
         def createOrderpunchsymbol(self):
@@ -1007,7 +1741,7 @@ class utility:
                  
 # obj=utility(1)
 # obj.checkfunds()
-# obj.orderstatus()
+# obj.upstoxwebsoket()
 
 # data =obj.createOrderpunchsymbol()
 

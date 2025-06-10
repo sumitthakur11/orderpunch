@@ -1,0 +1,467 @@
+2025-05-30 12:15:01             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 12:15:12             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 12:15:12             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 12:16:19             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 12:16:20             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 12:16:20             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 12:18:08             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 12:18:08             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 12:18:08             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 12:19:22             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 12:19:22             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 12:19:22             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 12:20:16             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 12:20:23             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 12:20:23             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 12:20:57             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 12:20:57             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 12:20:57             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 12:20:57             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 12:20:57             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 12:20:57             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 12:20:57             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 12:26:26             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 12:26:26             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 12:26:26             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 12:26:26             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 12:26:26             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 12:26:26             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 12:26:26             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 12:26:42             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 12:26:42             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 12:26:42             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 12:26:42             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 12:26:42             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 12:26:42             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 12:26:42             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 12:29:12             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 12:29:13             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 12:29:13             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 12:29:13             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 12:29:13             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 12:29:13             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 12:29:13             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 12:29:13             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 12:29:13             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 12:29:13             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 12:29:13             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 12:29:13             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 12:29:13             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 12:29:13             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 12:58:13             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 12:58:14             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 12:58:14             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 12:58:14             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 12:58:14             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 12:58:14             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 12:58:14             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:11:30             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:11:31             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:11:31             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:11:31             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 13:11:31             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 13:11:31             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 13:11:31             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:12:09             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:12:09             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:12:09             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:12:09             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:12:09             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 13:12:09             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 13:12:09             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 13:12:09             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:12:09             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:12:09             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:12:09             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 13:12:09             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 13:12:09             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 13:12:09             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:12:36             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:12:38             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:12:38             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:12:38             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 13:12:38             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 13:12:38             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 13:12:38             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:16:11             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:16:12             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:16:12             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:16:12             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 13:16:12             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 13:16:12             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 13:16:12             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:17:52             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:17:52             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:17:52             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:19:10             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:19:10             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:19:10             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:19:24             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:19:25             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:19:25             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:20:11             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:20:15             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:20:16             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:20:16             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:20:17             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:20:17             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:21:51             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:21:56             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:21:56             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:22:40             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:22:41             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:22:41             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:23:06             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:23:06             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:23:06             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:23:06             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 13:23:06             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 13:23:06             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 13:23:06             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:23:57             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:23:57             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:23:57             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:24:26             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:24:27             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:24:27             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:24:27             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 13:24:27             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 13:24:27             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 13:24:27             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:26:05             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:26:05             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:26:05             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:26:05             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 13:26:05             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 13:26:05             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 13:26:05             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:28:51             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:28:52             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:28:52             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:28:52             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 13:28:52             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 13:28:52             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 13:28:52             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:29:35             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:29:36             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:29:36             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:29:36             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 13:29:36             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 13:29:36             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 13:29:36             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:31:24             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:31:24             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:31:24             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:31:24             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 13:31:24             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 13:31:24             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 13:31:24             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:32:21             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:32:21             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:32:21             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:32:21             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 13:32:21             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 13:32:21             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 13:32:21             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:37:17             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:37:17             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:37:17             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:37:17             SUCCESS             MOFSLOPENAPI.py             Initilize login request send
+2025-05-30 13:37:17             SUCCESS             MOFSLOPENAPI.py             Initilize Post WebRequest Sent
+2025-05-30 13:37:17             SUCCESS             MOFSLOPENAPI.py             Post WebRequest Send Successfully
+2025-05-30 13:37:17             ERROR             MOFSLOPENAPI.py             Method Not Allowed
+2025-05-30 13:43:08             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:43:08             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:43:08             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:43:30             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:43:32             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:43:32             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:44:34             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:44:34             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:44:34             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 13:56:25             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 13:56:26             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 13:56:26             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:00:43             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:00:44             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:00:44             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:01:49             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:01:49             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:01:49             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:04:29             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:04:30             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:04:30             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:07:08             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:07:08             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:07:08             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:09:14             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:09:15             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:09:15             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:11:04             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:11:06             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:11:06             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:12:46             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:12:46             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:12:46             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:15:55             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:15:56             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:15:56             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:16:15             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:16:15             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:16:15             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:17:05             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:17:05             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:17:05             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:18:10             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:18:12             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:18:12             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:18:39             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:18:40             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:18:40             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:25:37             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:25:44             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:25:44             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:26:09             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:26:09             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:26:09             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:26:31             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:26:32             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:26:32             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:30:35             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:30:47             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:30:47             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:55:15             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:55:20             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:55:20             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:57:21             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:57:21             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:57:21             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:57:55             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:57:56             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:57:56             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 14:58:52             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 14:58:53             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 14:58:53             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 15:01:28             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 15:01:31             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 15:01:31             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 15:01:54             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 15:01:54             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 15:01:54             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 15:04:53             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 15:04:53             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 15:04:53             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 21:44:05             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 21:44:05             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 21:44:05             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:40:26             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:40:27             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:40:27             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:41:24             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:41:24             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:41:24             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:42:30             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:42:31             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:42:31             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:42:38             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:42:39             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:42:39             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:42:55             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:42:56             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:42:56             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:43:31             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:43:31             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:43:31             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:44:04             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:44:05             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:44:05             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:44:25             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:44:26             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:44:26             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:44:51             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:44:51             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:44:51             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:45:29             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:45:30             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:45:30             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:45:30             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:45:31             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:45:31             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:45:32             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:45:33             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:45:33             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:48:14             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:48:15             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:48:15             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:49:18             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:49:19             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:49:19             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:49:52             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:49:52             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:49:52             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:52:32             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:52:32             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:52:32             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:52:42             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:52:42             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:52:42             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:53:00             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:53:01             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:53:01             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:53:52             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:53:52             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:53:52             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:57:02             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:57:04             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:57:04             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:57:28             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:57:29             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:57:29             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:59:12             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:59:12             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:59:12             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:59:20             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:59:20             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:59:20             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 22:59:25             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 22:59:26             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 22:59:26             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:00:34             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:00:42             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:00:42             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:01:10             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:01:10             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:01:10             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:03:23             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:03:24             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:03:24             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:03:28             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:03:29             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:03:29             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:03:55             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:03:56             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:03:56             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:04:16             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:04:17             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:04:17             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:04:17             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:04:18             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:04:18             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:04:33             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:04:33             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:04:33             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:04:34             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:04:34             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:04:34             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:04:36             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:04:37             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:04:37             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:06:13             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:06:13             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:06:13             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:06:14             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:06:15             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:06:15             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:09:11             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:09:11             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:09:11             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:09:22             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:09:22             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:09:22             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:10:06             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:10:12             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:10:12             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:12:16             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:12:16             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:12:16             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:12:20             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:12:21             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:12:21             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:12:54             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:12:54             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:12:54             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:12:59             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:13:00             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:13:00             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:13:05             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:13:05             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:13:05             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:13:08             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:13:09             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:13:09             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:14:15             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:14:15             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:14:15             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:14:19             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:14:19             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:14:19             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:14:28             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:14:28             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:14:28             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:14:32             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:14:32             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:14:32             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:14:33             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:14:34             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:14:34             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:15:36             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:15:48             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:15:49             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:15:49             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:15:50             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:15:50             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:15:50             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:19:21             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:19:23             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:19:23             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:20:09             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:20:13             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:20:16             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:20:16             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:20:16             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:20:18             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:20:18             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:20:20             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:20:20             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:20:21             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:20:25             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:20:25             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:21:32             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:21:32             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:21:32             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:23:33             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:23:34             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:23:34             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:24:54             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:24:54             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:24:54             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:25:27             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:25:32             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:25:32             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:26:58             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:26:59             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:26:59             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:29:05             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:29:06             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:29:06             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:38:56             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:38:56             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:38:56             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:45:27             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:45:27             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:45:27             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:45:28             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:45:28             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:45:28             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:47:17             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:47:18             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:47:18             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:54:05             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:54:05             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:54:05             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:56:45             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:56:45             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:56:45             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done
+2025-05-30 23:59:14             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor
+2025-05-30 23:59:14             SUCCESS             MOFSLOPENAPI.py             GetManufacturerunknown
+2025-05-30 23:59:14             SUCCESS             MOFSLOPENAPI.py             Initilize Constructor Done

@@ -62,10 +62,12 @@ def searchscrip (name,exchange='NFO',instrument=''):
         elif exchange=='BFO':
             exchange= "BSE"
 
+
         
         if instrument=='FUTSTK' or instrument=='FUTIDX' :
             db =db[db['segment']=='FNO']
             db =db[db['instrument_type']=='FUT']
+            # print(db)
 
 
         
@@ -74,19 +76,22 @@ def searchscrip (name,exchange='NFO',instrument=''):
             db =db[db['segment']=='FNO']
 
             db =db[db['instrument_type'].isin(['CE', 'PE']) ]
+            # print(db)
 
-            
 
+        if instrument =='EQ' and name:
+            db =db[db['instrument_type']=='EQ']
+            db =db[db['trading_symbol']==name]
 
-        # if instrument=='EQ':
-        #     instrument=''
-        if  name and instrument and exchange:
-            db =db[db['exchange']==exchange]
-            # db =db[db['instrument_type']==instrument]
-            db =db[db['underlying_symbol']==name]
         else:
-            db =db[db['exchange']==exchange]
-        
+
+            if  name and instrument and exchange:
+                db =db[db['exchange']==exchange]
+                db =db[db['underlying_symbol']==name]
+
+            else:
+                db =db[db['exchange']==exchange]
+            
 
 
         db=db.rename(columns={'trading_symbol':'TradingSymbol','lot_size':'lotsize','exchange_token':'token','instrument_type':'instrument'})
@@ -184,27 +189,30 @@ class HTTP(growwsetup):
             
 
         data = self.groww.cancel_order( segment=segment,groww_order_id=orderno)
+        
         return data
     
     
     def modifyorder(self,data,orderobject):
-        try:
-
-            data= None
-            if exchange == "NSE" or exchange =='BSE':
-                segment = self.groww.SEGMENT_CASH 
-            elif exchange=='NFO'or exchange=='BFO':
-                segment = 'FNO'
-            data = self.groww.modify_order(quantity =data['quantity'],segment =segment ,groww_order_id =orderobject.orderid, price=data['ltp'],trigger_price=data['ltp'],order_type=data['ordertype'])
         
-            if data['groww_order_id']:
-                orderobject.orderid=data['groww_order_id']
-                
+        try:
+            print(data,'modify')
+
+            if data['exchange'] == "NSE" or data['exchange']  =='BSE':
+                segment = 'CASH'
+            elif data['exchange'] =='NFO'or data['exchange'] =='BFO':
+                segment = 'FNO'
+            res = self.groww.modify_order(quantity =data['quantity'],segment =segment ,groww_order_id =orderobject.orderid, price=float(data['ltp']),order_type=data['ordertype'])
+            print(res,"res")
+            if res['groww_order_id']:
+                orderobject.orderid=res['groww_order_id']
+                orderobject.save()
 
                 return data,None
             else:
                 return False,data
         except Exception as e:
+            print(e)
             return False,e
 
 
@@ -244,18 +252,16 @@ class HTTP(growwsetup):
                                                 price=orderparam['ltp'],               # Optional: Price of the stock (for Limit orders)
                                                 trigger_price=orderparam['ltp'],       # Optional: Trigger price (if applicable)
                                             )
+            print(orderiddta    )
+            if orderiddta['groww_order_id']:
+           
+                orderparam['orderid']=orderiddta['groww_order_id']
+                orderparam['orderstatus']=orderiddta['order_status']
+                orderparam['lotsize']=int(orderparam['lotsize']) 
 
-            if orderiddta['data']:
-                orderobject.quantity= orderparam['quantity']
-                orderobject.ordertype= orderparam['ordertype']
-                orderobject.product_type= orderparam['product_type']
-                orderobject.avg_price= orderparam['ltp']
-                orderobject.transactiontype= orderparam['transactiontype']
-                orderobject.discloseqty= orderparam['discloseqty']
-                orderobj.orderid=orderiddta['groww_order_id']
-                orderobj.orderstatus=orderiddta['order_status']
 
-                orderobject.save()
+
+                orderobject(orderparam)
           
                 logpathfron.info(f'Broker Shoonya order placed, orderid :{orderiddta['groww_order_id']}')
 
@@ -277,7 +283,7 @@ class HTTP(growwsetup):
   
     
     
-    def orderbook(self):
+    def orderBook(self):
         """
         Info :Get order status
         """
@@ -292,10 +298,11 @@ class HTTP(growwsetup):
         try:
         
             ret= self.groww.get_positions_for_user()
+            print(ret)
             findata= dict()
             listfin=[]
             if ret['positions']:
-                for i in position:
+                for i in ret['positions']:
                             
                         findata['exchange'] = i['exchange']
                         findata['tradingsymbol'] = i['trading_symbol']
@@ -306,11 +313,13 @@ class HTTP(growwsetup):
                         # findata['lotsize'] = i['ls']
                         # # findata['unrealised'] = i['urmtom']
                         # findata['realised'] = i['rpnl']
-                        listfin.append(finaldata)
+                        listfin.append(findata)
+                        findata= {}
                 
-                        return listfin ,None
+                return listfin ,None
             else:
                     return None,'Not found'
+
 
 
         except Exception as e:
@@ -321,7 +330,7 @@ class HTTP(growwsetup):
     def allholding (self):
         try:
             
-            ret= self.groww.get_positions_for_user()
+            ret= self.groww.get_holdings_for_user()
       
             print(ret)
             findata= dict()
@@ -329,7 +338,7 @@ class HTTP(growwsetup):
             if ret['holdings']:
          
               
-                for i in position:
+                for i in ret['holdings']:
                             
                     
                         findata['tradingsymbol'] = i['trading_symbol']
@@ -337,9 +346,12 @@ class HTTP(growwsetup):
                         findata['averageprice'] = i['average_price']
 
 
-                        listfin.append(finaldata)
+
+                        listfin.append(findata)
+                        findata= {}
+
                 
-                        return listfin ,None
+                return listfin ,None
             else:
                     return None,'Not found'
 

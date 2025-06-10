@@ -296,7 +296,10 @@ class HTTP(SMARTAPI):
         try :
             data= self.smartApi.rmsLimit()
             print(data)
-            return data['data'],None
+            if data['success']:
+                return data['data'],None
+            else:
+                 return None,data
         
         except Exception as e:
             return None, e
@@ -488,9 +491,12 @@ class HTTP(SMARTAPI):
 
     def orderBook(self):
 
+
         data = self.smartApi.orderBook()
-        logger.info(f"Order Book: {data}")
-        return data['data']
+        if data['data']:
+         return data['data']
+        else:
+            return None
     def modifyorder(self,data,orderobject):
         try:
 

@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_protect
 from . import serializers as ser 
 from . import models as md
 import datetime
-from .Brokers import shoonyasdk,Angelsdk,motilalsdk,growwsdk,dhansdk,flattradesdk,stoxkartsdk,fyerssdk
+from .Brokers import shoonyasdk,Angelsdk,motilalsdk,growwsdk,dhansdk,flattradesdk,stoxkartsdk,fyerssdk,upstoxsdk,zerodhasdk,hdfcsdk,samcosdk,Alicebluesdk
 from .utility import utility
 from . import env
 import os
@@ -160,6 +160,8 @@ class broker(GenericAPIView):
                 print(proj.brokername)
                 if proj.brokername=='GROWW':    
                     proj.valid=True
+                if proj.brokername=='DHAN':    
+                    proj.valid=True
 
                 proj.save()
 
@@ -222,14 +224,19 @@ brokerlist=[
     {"NAME":"SHOONYA"},
     {"NAME":"DHAN"},
     {"NAME":"MOTILAL"},
-    # {"NAME":"ANANDRATHI"},
     {"NAME":"GROWW"},
     {"NAME":"FYERS"},
+    {"NAME":"UPSTOX"},
     {"NAME":"ZERODHA"},
     {"NAME":"SAMCO"},
+    {"NAME":"HDFC"},
     {"NAME":"FLATTRADE"},
+    {"NAME":"STOXKART"},
+    {"NAME":'ALICEBLUE'}
     # {"NAME":"BIGUL"},
-    {"NAME":"STOXKART"}
+    # {"NAME":"ANANDRATHI"},
+
+
 
     
 ]
@@ -283,13 +290,32 @@ class Getsymbols(GenericAPIView):
                 if request.GET.get('Broker').lower()=="fyers":
                     datas= fyerssdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
 
-                
+                if request.GET.get('Broker').lower()=="upstox":
+                    datas= upstoxsdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
+                if request.GET.get('Broker').lower()=="zerodha":
+                    sdk =zerodhasdk.kitesetup('')
+                    datas= sdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
+                if request.GET.get('Broker').lower()=="hdfc":
+            
+                    datas= hdfcsdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
+                if request.GET.get('Broker').lower()=="samco":
+                    HT=samcosdk.HTTP()
+            
+                    datas= HT.searchscrip(name.upper(),exchange.upper(),instrument.upper())
+
+                if request.GET.get('Broker').lower()=="aliceblue":
+            
+                    datas= Alicebluesdk.searchscrip(name.upper(),exchange.upper(),instrument.upper())
 
 
-                
+                if datas.empty:
+                    datas= []
+
+
+
+         
+            
             print(datas)
-
-
 
 
                 # datas = datas.to_dict(orient="records")
@@ -534,9 +560,8 @@ class postionsobj(GenericAPIView):
             if  request.GET.get('type')== "all":
                 data=md.orderobject.objects.filter(user=users,updated_at__range=(end,start)).values('id','updated_at','orderid','tradingsymbol','symboltoken','quantity','avg_price',
                                                                       'exchange','broker','accountnumber','side','orderstatus','transactiontype','instrument')
-
-            
-            
+                
+                # data['sid']=data['id']
                 
 
             
@@ -652,6 +677,7 @@ class loadaccount(GenericAPIView):
         try:
             users = request.user
             data= []
+            print(request.GET.get('broker'))
             data1= dict()
             if request.GET.get('broker')=='all':
                 datas= brokerlist
@@ -659,7 +685,6 @@ class loadaccount(GenericAPIView):
   
 
                 datas= md.Broker.objects.filter(user=users.id,brokername='SHOONYA').values('brokerid','brokername','accountnumber','apikey','secretkey','password','vendorcode','AuthToken','active')
-                print(datas)
             elif request.GET.get('broker').lower()=='angel':
                 datas= md.Broker.objects.filter(user=users.id,brokername='ANGEL').values('brokerid','accountnumber','brokername','active','apikey','password','secretkey','AuthToken')
             
@@ -673,6 +698,27 @@ class loadaccount(GenericAPIView):
             elif request.GET.get('broker').lower()=='groww':
                 datas= md.Broker.objects.filter(user=users.id,brokername='GROWW').values('brokerid','AuthToken','active')
             
+            elif request.GET.get('broker').lower()=='dhan':
+                datas= md.Broker.objects.filter(user=users.id,brokername='DHAN').values('brokerid','accountnumber','AuthToken','active','password')
+            
+            elif request.GET.get('broker').lower()=='upstox':
+                datas= md.Broker.objects.filter(user=users.id,brokername='UPSTOX').values('brokerid','accountnumber','AuthToken','active','apikey','secretkey')
+            
+            elif request.GET.get('broker').upper()=='ALICEBLUE':
+                print('here')
+                datas= md.Broker.objects.filter(user=users.id,brokername='ALICEBLUE').values('brokerid','accountnumber','active','apikey','AuthToken','secretkey','password')
+
+            elif request.GET.get('broker').upper()=='ZERODHA' or  request.GET.get('broker').upper()=='STOXKART'or request.GET.get('broker').upper()=='FLATTRADE' :
+                print('here')
+                datas= md.Broker.objects.filter(user=users.id,brokername=request.GET.get('broker').upper()).values('brokerid','accountnumber','active','AuthToken','apikey','secretkey','password')
+
+            elif request.GET.get('broker').upper()=='HDFC'  :
+                print('here')
+                datas= md.Broker.objects.filter(user=users.id,brokername=request.GET.get('broker').upper()).values('brokerid','accountnumber','active','AuthToken','apikey','secretkey')
+            elif request.GET.get('broker').upper()=='SAMCO'  :
+                print('here')
+                datas= md.Broker.objects.filter(user=users.id,brokername=request.GET.get('broker').upper()).values('brokerid','accountnumber','active','password','secretkey')
+
                 # datas = datas.to_dict(orient="records")
 
             return Response({"message":datas})

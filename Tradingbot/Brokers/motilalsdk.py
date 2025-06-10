@@ -26,6 +26,9 @@ import os
 from pathlib import Path
 import pathlib
 import platform
+import pytz
+from django.utils.timezone import localtime
+
 from .PythonSDK import MOFSLOPENAPI
 path = pathlib.Path(__file__).resolve().parent.parent.parent
 # import ThreadPoolExecutor
@@ -60,24 +63,38 @@ def searchscrip (name,exchange='NFO',instrument=''):
         csv_data = io.StringIO(data.text)
         db= pd.read_csv(csv_data,delimiter = ",",keep_default_na=False)
         print(db.head())
-        
+        if 'exchange' in db.columns:
+                db.drop(columns=['exchange'], inplace=True)
         if exchange=='NFO':
             exchange= "NSEFO"
         elif exchange=='BFO':
             exchange= "BSEFO"
-
         if instrument=='EQ':
             instrument=''
-        if  name and instrument and exchange:
             db =db[db['exchangename']==exchange]
+            db =db[db['scripshortname']==name]
+
+
+
+
+        if  name and instrument and exchange:
+
+            db =db[db['exchangename']==exchange]
+          
+
             db =db[db['instrumentname']==instrument]
             db =db[db['scripshortname']==name]
+
+
+            print('HERE2')
+
         else:
             db =db[db['exchangename']==exchange]
         
 
 
         db=db.rename(columns={'scripname':'TradingSymbol','marketlot':'lotsize','scripcode':'token','exchangename':'exchange','instrumentname':'instrument'})
+        print(type(db))
         return db
 
 
@@ -300,33 +317,59 @@ class HTTP(motilalsetup):
 
     
     def cancel_order(self, orderid):
-        
+        Authorization= self.gettoken()
+        self.headers['Authorization'] = Authorization['Token']
         orderparams = {"uniqueorderid": orderid}
-        ret= requests.post(self.baseurl+"rest/trans/v1/cancelorder",data=orderparams,header=self.headers)
+        ret= requests.post(self.baseurl+"rest/trans/v1/cancelorder",json=orderparams,headers=self.headers)
+        print(ret.json())
         return ret.json()
     def modifyorder(self,data,orderobject):
         try:
+            Authorization= self.gettoken()
+            self.headers['Authorization'] = Authorization['Token']
+            print(data)
 
+
+            if data['product_type'].upper()== "INTRADAY":
+                product_type="NORMAL"
+            elif data['product_type'].upper() == "CARRYFORWARD":
+                product_type="M"
+            elif data['product_type'].upper() == "DELIVERY":
+                product_type="DELIVERY"
+
+           
+
+
+            
+            price_type= 'MARKET' if data['ordertype']=='MARKET' else "LIMIT"
+            price=data['ltp']
+            tradingsymbol=data['tradingsymbol']
+            discloseqty=int(float(data['discloseqty']))
+            # kolkata = pytz.timezone('Asia/Kolkata')
+            # formatted_time = localtime(orderobject.lastmodifiedtime, timezone=kolkata).strftime('%d-%b-%Y %H:%M:%S')
             orderparams = {
             "uniqueorderid": orderobject.orderid,
-            "newprice":data['ltp'],
-            "producttype":data['product_type'],
-            "newordertype":data['ordertype'],
+            "newprice":float(data['ltp']),
+            "producttype":product_type,
+            "newordertype":price_type,
             "neworderduration":'DAY',
-            "newquantityinlot ":data['quantity']/data['lotsize'],
-            "symboltoken":orderobject.symboltoken,
-            'newdisclosedquantity':data['discloseqty'],
+            "newquantityinlot":int(data['quantity']),
+            'newdisclosedquantity':discloseqty,
             'newtriggerprice':0,
-            'lastmodifiedtime':orderobject.updated_at,
+            'lastmodifiedtime':orderobject.lastmodifiedtime,
             'qtytradedtoday':0
             }
-            ret= requests.post(self.baseurl+"rest/trans/v1/placeorder",data=orderparams,header=self.headers)
+            print(orderparams,'orders')
+            ret= requests.post(self.baseurl+"rest/trans/v2/modifyorder",json=orderparams,headers=self.headers)
+            print(ret)
+            print(ret.json())
 
             if orderiddta['status']=='SUCCESS':
                return True, None
             else:
                 return False,orderiddta['message']
         except Exception as e :
+            print(e)
             return None,e
 
 
@@ -390,16 +433,15 @@ class HTTP(motilalsetup):
             ret= ret.json()
             print(ret)
             if ret['status']=='SUCCESS':
-                ret=ret.json()
                 status=self.orderBook()
                 status = pd.DataFrame(status['data'])
                 status=status [status['uniqueorderid']==ret['uniqueorderid']]
                 orderparam['orderid']=ret['uniqueorderid']
                 orderparam['orderstatus']= status['orderstatus'].iloc[-1].upper()
-                orderparam['status']=True if status['orderstatus'].upper()=='COMPLETE' else False
+                orderparam['status']=True if status['orderstatus'].iloc[-1].upper()=='COMPLETE' else False
                 orderparam['user']=1
                 orderparam['broker']='MOTILAL'
-                orderparam['avg_price']=status['averageprice'].iloc[-1].upper()
+                orderparam['avg_price']=status['averageprice'].iloc[-1]
 
                 orderobject(orderparam)
                 logpathfron.info(f'Broker Shoonya order placed, orderid :{ret['uniqueorderid']}')
@@ -421,9 +463,12 @@ class HTTP(motilalsetup):
 
     def orderBook(self):
         param= dict()
+        Authorization= self.gettoken()
+        self.headers['Authorization'] = Authorization['Token']
     
-        ret= requests.post(self.baseurl+"rest/book/v2/getorderbook",data=param,header=self.headers)
+        ret= requests.post(self.baseurl+"rest/book/v2/getorderbook",data=param,headers=self.headers)
         ret= ret.json()
+        
     
 
         return ret
@@ -456,12 +501,13 @@ class HTTP(motilalsetup):
                             findata['exchange'] = i['exchange']
                             findata['tradingsymbol'] = i['symbol']
                             findata['symboltoken'] = i['symboltoken']
-                            findata['buyavgprice'] = i['buyquantity']/i['buyamount']
-                            findata['sellavgprice'] =  i['sellquantity']/i['sellamount']
+                            findata['buyavgprice'] = i['buyamount']/i['buyquantity']
+                            findata['sellavgprice'] = i['sellamount']/i['sellquantity'] if i['sellamount'] >0 else 0
                             findata['netqty'] = i['buyquantity']-i['sellquantity']
                             findata['ltp'] = i['LTP']
                             findata['unrealised'] = i['marktomarket']
                             findata['realised'] = i['bookedprofitloss']
+                            # finaldata['lastmodifiedtime']=i['lastmodifiedtime']
                             listfin.append(findata)
                             findata={}
 
